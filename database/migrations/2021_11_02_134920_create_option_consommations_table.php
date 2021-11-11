@@ -17,11 +17,14 @@ class CreateOptionConsommationsTable extends Migration
             $table->id();
             $table->float('option_conso_prix');
             $table->string('option_conso_titre');
-
+            $table->string('option_conso_description');
             $table->timestamps();
 
             $table->unsignedBigInteger('consommation_id');
-            $table->foreign('consommation_id')->references('id')->on('consommations');
+            $table->foreign('consommation_id')->references('id')->on('consommations')->onDelete('cascade');
+
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

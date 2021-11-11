@@ -63,7 +63,7 @@ class LoginController extends Controller
             }
         }else
         {
-            redirect('login');
+            return redirect('login')->with(session()->flash('alert-danger', "Email incorrect.!!!  "));
         }
     }
 }

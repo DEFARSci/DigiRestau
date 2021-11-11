@@ -27,7 +27,7 @@ class CreateCommandesTable extends Migration
             $table->timestamps();
 
             $table->unsignedBigInteger('commande_user_id');
-            $table->foreign('commande_user_id')->references('id')->on('users');
+            $table->foreign('commande_user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

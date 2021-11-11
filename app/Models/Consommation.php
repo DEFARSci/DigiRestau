@@ -14,18 +14,24 @@ class Consommation extends Model
     protected $fillable = [
         'consommation_titre',
         'consommation_description',
-        'consommation_statut',
-        'consommation_added_dateTime',
+        'consommation_prix',
+        'consommation_image',
         'consommation_categorie_id',
+        'user_id'
     ];
 
     public function categorie()
     {
-        return $this->belongsTo(CategorieConso::class);
+        return $this->belongsTo(CategorieConso::class,'consommation_categorie_id');
     }
 
     public function optionsConso()
     {
         return $this->hasMany(OptionConsommation::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

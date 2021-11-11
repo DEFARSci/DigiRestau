@@ -21,10 +21,10 @@ class CreateOptionCommandesTable extends Migration
             $table->timestamps();
 
             $table->unsignedBigInteger('option_commande_consommation_id');
-            $table->foreign('option_commande_consommation_id')->references('id')->on('option_consommations');
+            $table->foreign('option_commande_consommation_id')->references('id')->on('option_consommations')->onDelete('cascade');
 
             $table->unsignedBigInteger('option_commande_commande_id');
-            $table->foreign('option_commande_commande_id')->references('id')->on('commandes');
+            $table->foreign('option_commande_commande_id')->references('id')->on('commandes')->onDelete('cascade');
         });
     }
 

@@ -15,16 +15,22 @@ class OptionConsommation extends Model
         'option_conso_prix',
         'option_conso_titre',
         'consommation_id',
+        'option_conso_description'
     ];
 
     public function consomation()
     {
-        return $this->belongsTo(Consommation::class);
+        return $this->belongsTo(Consommation::class,'consommation_id');
     }
 
     public function optionsCommandes()
     {
         return $this->hasMany(OptionCommande::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
 }

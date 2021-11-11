@@ -12,6 +12,15 @@ use App\Models\User;
 
 class ClientController extends Controller
 {
+    // /**
+    //  * Create a new controller instance.
+    //  *
+    //  * @return void
+    //  */
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     // La vue accueil
     public function homeClient()
@@ -50,7 +59,8 @@ class ClientController extends Controller
      public function verify($verification)
      {
          $user = User::where('is_actived',$verification)->first();
-         if($user){
+         if($user)
+         {
              $user->is_actived = 1;
              $user->update();
 
@@ -67,7 +77,7 @@ class ClientController extends Controller
          return view('client.edit', compact('comptes', 'user'));
      }
 
-     // Mise a jour du compte
+     // Mise a jour du compte profil
      public function update(User $user, Request $request)
      {
          $data = $request->validate([

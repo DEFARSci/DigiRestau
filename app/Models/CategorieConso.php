@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Etablissement;
 use App\Models\Consommation;
+use App\Models\User;
 
 class CategorieConso extends Model
 {
@@ -13,13 +14,18 @@ class CategorieConso extends Model
 
     protected $fillable = [
         'categorie_nom',
-        'categorie_rang',
-        'categorie_etablissement_id',
+        'categorie_description',
+        'user_id',
     ];
 
     public function etablissement()
     {
         return $this->belongsTo(Etablissement::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function consommations()

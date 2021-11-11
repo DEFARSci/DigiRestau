@@ -8,6 +8,15 @@ use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
+    // /**
+    //  * Create a new controller instance.
+    //  *
+    //  * @return void
+    //  */
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
     public function admin()
     {
         // $users = User::where('approved')->get();
@@ -15,6 +24,8 @@ class AdminController extends Controller
         $users = User::orderBy('id', 'DESC')->get();
         return view('admin.home', compact('users'));
     }
+
+    // elle permet d'accepter les identifiants d'un new membre inscrit
 
     public function approved(Request $request, $user)
     {

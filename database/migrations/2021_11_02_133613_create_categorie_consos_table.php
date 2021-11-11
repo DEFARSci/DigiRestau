@@ -16,11 +16,11 @@ class CreateCategorieConsosTable extends Migration
         Schema::create('categorie_consos', function (Blueprint $table) {
             $table->id();
             $table->string('categorie_nom');
-            $table->integer('categorie_rang');
+            $table->string('categorie_description');
             $table->timestamps();
 
-            $table->unsignedBigInteger('categorie_etablissement_id');
-            $table->foreign('categorie_etablissement_id')->references('id')->on('etablissements');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
         });
     }

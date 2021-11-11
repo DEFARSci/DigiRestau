@@ -20,14 +20,14 @@
                 <div class="card-body">
                         <div class="form-group row">
                             {{-- <div class="col-md-8 offset-md-2 justify-content-center"> --}}
-                               <div class="col-md-4 offset-md-1 justify-content-center ">
+                            <div class="col-md-4 offset-md-1 justify-content-center ">
                                 @if($user->client->client_photo != null)
-                                <img src="/photoProfile/{{ $user->client->client_photo }}" alt="profile" class="rounded-circle" width="100" height="100">
-                              @else
-                                <img src="{{asset('photoProfile/default.jpg')}}" alt="profile" class="rounded-circle" width="100" height="100">
-                             @endif
-                               </div>
-                               <div class="col-md-4">
+                                    <img src="/photoProfile/{{ $user->client->client_photo }}" alt="profile" class="rounded-circle" width="100" height="100">
+                                    @else
+                                    <img src="{{asset('photoProfile/default.jpg')}}" alt="profile" class="rounded-circle" width="100" height="100">
+                                @endif
+                            </div>
+                            <div class="col-md-4">
                                 <label for="file-ip-1" class="">Choisissez une image</label>
                                 <input type="file" id="file-ip-1" onchange="showPrevent(event);" class=" @error('client_photo') is-invalid @enderror" name="client_photo">
                                 @error('client_photo')
@@ -38,7 +38,7 @@
                                     <div class="preview">
                                         <img id="file-ip-1-preview" class="imgFile" />
                                     </div>
-                               </div>
+                            </div>
                         </div>
                 </div>
             </div>

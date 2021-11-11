@@ -1,5 +1,8 @@
 Bonjour,{{$user->name}}
-@if($user->statut == 'client')
+@if($user->statut === 'client')
+
+<p>Le lorem ipsum est, en imprimerie, une suite de mots sans signification utilisée à titre provisoire pour calibrer une mise en page,</p>
+
 @component('mail::button',['url' => route('verification_user',$user->is_actived)])
 
 Validation du compte

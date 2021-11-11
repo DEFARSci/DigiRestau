@@ -23,7 +23,7 @@ class CreateTokenOrdersTable extends Migration
             $table->timestamps();
 
             $table->unsignedBigInteger('token_order_etablissement_id');
-            $table->foreign('token_order_etablissement_id')->references('id')->on('etablissements');
+            $table->foreign('token_order_etablissement_id')->references('id')->on('etablissements')->onDelete('cascade');
         });
     }
 
