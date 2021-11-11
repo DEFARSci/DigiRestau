@@ -16,13 +16,14 @@ class AdminSeeder extends Seeder
     {
         User::create([
             'name' => 'Admin',
+            'nameEnseigne' => null,
             'email' => 'admin@admin.com',
             'email_verified_at' => now(),
             'password' => bcrypt('passer123'),
             'is_admin' => 1,
             'statut' => 'admin',
-            'is_actived' => 0,
-            'approved' => 0,
+            'is_actived' => 1,
+            'approved' => 1,
         ]);
     }
 }

@@ -244,7 +244,8 @@ class RestaurantController extends Controller
         ]);
 
         $restau = new User();
-        $restau->name = $request->nom;
+        $restau->nameEnseigne = $request->nom;
+        $restau->name = null;
         $restau->email = $request->email;
         $restau->type = $request->type;
         $restau->statut = 'enseigne';
@@ -274,9 +275,9 @@ class RestaurantController extends Controller
 
     public function searchAutomatic(Request $request)
     {
-        $datas= User::select('name')
-                            ->where('name', 'like', "%{$request->term}%")
-                            ->pluck('name');
+        $datas= User::select('nameEnseigne')
+                            ->where('nameEnseigne', 'like', "%{$request->term}%")
+                            ->pluck('nameEnseigne');
         return response()->json($datas);
     }
 

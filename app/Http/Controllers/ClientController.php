@@ -39,6 +39,7 @@ class ClientController extends Controller
 
         $client = new User();
         $client->name = $request->nom;
+        $client->nameEnseigne = null;
         $client->email = $request->email;
         $client->statut = 'client';
         $client->is_admin = 0;

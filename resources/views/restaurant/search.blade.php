@@ -1,7 +1,7 @@
 <div class="container">
     <div class="">
         <form class="d-flex">
-            <input class="form-control me-2 typeahead"  type="text" placeholder="Search" aria-label="Search">
+                <input class="form-control me-2 typeahead"  type="text" placeholder="Search" aria-label="Search">
         </form>
     </div>
  </div>
@@ -15,6 +15,4 @@
                 });
             }
         });
-
-        $('input')
     </script>

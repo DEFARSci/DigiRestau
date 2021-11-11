@@ -27,7 +27,7 @@
                             @foreach ($users as $user )
                             @if($user->statut == 'enseigne')
                                 <tr>
-                                    <td>{{ $user->name }}</td>
+                                    <td>{{ $user->nameEnseigne }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>
                                         @if ($user->approved == 0)
@@ -38,7 +38,7 @@
                                     </td>
                                     <td>
                                         <a href="{{ route('approved', $user->id) }}">
-                                            @if($user->approved ==1)
+                                            @if($user->approved == 1)
                                                 Inactive
                                             @else
                                                 Active

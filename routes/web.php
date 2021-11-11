@@ -79,7 +79,8 @@ Route::get('/verification/{verification}',[ClientController::class, 'verify'])->
 // Verification compte restaurant par un admin
 Route::get('/admin',[AdminController::class,'admin']);
 Route::get('approved/{user}',[AdminController::class,'approved'])->name('approved');
-
+Route::get('search-automatic/{id}',[RestaurantController::class,'searchAutomatic']);
+Route::get('search',[RestaurantController::class,'search']);
 
 Auth::routes();
 

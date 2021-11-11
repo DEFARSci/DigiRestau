@@ -50,7 +50,7 @@ class LoginController extends Controller
         $email = User::where('email',$user['email'])->count();
         if($email > 0)
         {
-            if(auth()->attempt(array('is_admin' => 1,'statut' => "admin", 'email' => $user['email'], 'password' => $user['password'])))
+            if(auth()->attempt(array('approved' => 1,'is_actived' => 1,'is_admin' => 1,'statut' => "admin", 'email' => $user['email'], 'password' => $user['password'])))
             {
                 return redirect('/admin');
             }elseif(auth()->attempt(array('is_actived' => 1,'statut' => "client", 'email' => $user['email'], 'password' => $user['password'])))
