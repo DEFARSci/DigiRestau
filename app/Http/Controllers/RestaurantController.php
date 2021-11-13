@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\EMail;
+use Input;
 use App\Models\CategorieConso;
 use App\Models\Consommation;
 use Illuminate\Http\Request;
@@ -10,11 +10,13 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Etablissement;
 use App\Models\OptionConsommation;
-use App\Models\TypeRestaurant;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
-use App\Notifications\NewUser;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Validator;
+use PDF;
+
 class RestaurantController extends Controller
 {
     // /**
@@ -30,19 +32,37 @@ class RestaurantController extends Controller
     // La vue accueil
     public function homeRestaurant()
     {
-        $cateConso = CategorieConso::all();
+        $cateConso = CategorieConso::has('user')->get();
         $Consommation = Consommation::all();
         $conso = Consommation::has('user')->get();
         $optionconso = OptionConsommation::has('user')->get();
         $categories = CategorieConso::orderBy('id','DESC')->get();
-        return view('restaurant.home',compact('cateConso','conso','categories','Consommation','optionconso'));
+        $generate = Consommation::where('user_id', Auth::user()->id)->get();
+        //dd($generate);
+        // $qrcode = QrCode::format('png')->size(400)->errorCorrection('H')->generate('http://127.0.0.1:8000/voirMenu/'.$generate);
+        //     $pdf = PDF::loadView('pdf', compact('qrcode'));
+        //     $pdf->download('invoice.pdf');
+        $qrcode = QrCode::format('png')->size(400)->errorCorrection('H')->generate($generate);
+
+        return view('restaurant.home',compact('cateConso','conso','categories','Consommation','optionconso','qrcode','generate'));
     }
+
+    public function pdf(){
+        $generate = Consommation::where('user_id', Auth::user()->id)->get();
+        // //dd($generate);
+        $qrcode = QrCode::format('png')->size(400)->errorCorrection('H')->generate('http://127.0.0.1:8000/voirMenu/'.$generate);
+            $pdf = PDF::loadView('pdf', compact('qrcode'));
+            return $pdf->download('invoice.pdf');
+        // $qrcode = QrCode::format('png')->size(300)->errorCorrection('H')->generate($generate);
+
+    }
+
 //
     public function makeunactive(Consommation $conso)
     {
         $conso->statut = 1;
         $conso->update();
-        return back();
+        return back()->with(session()->flash('alert-success', "Produit non disponible "));
     }
 
     public function makeactive(Consommation $conso)
@@ -50,34 +70,42 @@ class RestaurantController extends Controller
         $conso->statut = 0;
         $conso->update();
 
-        return back();
+        return back()->with(session()->flash('alert-success', "Produit disponible "));
     }
 
     //Ajout consommation
     public function addConso(Request $request)
     {
-        $conso = new Consommation();
-        $conso->user_id = Auth::user()->id;
-        $conso->consommation_titre = $request->title;
-        $conso->consommation_description = $request->description;
-        $conso->consommation_prix = $request->prix;
+        $telephone = Auth::user()->etablissement->etablissement_numero_tel;
+        $adresse = Auth::user()->etablissement->etablissement_adresse;
+        if($telephone != null && $adresse != null){
+            $conso = new Consommation();
+            $conso->user_id = Auth::user()->id;
+            $conso->consommation_titre = $request->title;
+            $conso->consommation_description = $request->description;
+            $conso->consommation_prix = $request->prix;
 
-        $imageName = null;
+            $imageName = null;
 
-            if(request()->hasFile('image')){
-                $uploadedImage = $request->file('image');
-                $imageName = time() . '.' . $uploadedImage->getClientOriginalExtension();
-                $destinationPath = public_path('/storage/');
-                $uploadedImage->move($destinationPath, $imageName);
-                $uploadedImage->imagePath = $destinationPath . $imageName;
-            }
+                if(request()->hasFile('image')){
+                    $uploadedImage = $request->file('image');
+                    $imageName = time() . '.' . $uploadedImage->getClientOriginalExtension();
+                    $destinationPath = public_path('/storage/');
+                    $uploadedImage->move($destinationPath, $imageName);
+                    $uploadedImage->imagePath = $destinationPath . $imageName;
+                }
 
-        $conso->consommation_image = $imageName;
-        $conso->consommation_categorie_id = $request->categorie;
+            $conso->consommation_image = $imageName;
+            $conso->consommation_categorie_id = $request->categorie;
 
-        $conso->save();
+            $conso->save();
 
-        return back()->with(session()->flash('alert-success', "Consommation Ajoutée "));
+            return back()->with(session()->flash('alert-success', "Consommation Ajoutée "));
+        }else{
+            return back()->with(session()->flash('alert-success', "Vous devez mettre a jour votre profil "));
+
+        }
+
     }
 
     //Ajout Option consommation
@@ -178,16 +206,24 @@ class RestaurantController extends Controller
     // Ajout Ctegorie conso
     public function addCategorieConso(Request $request)
     {
-        //dd($request);
-        $categories = new CategorieConso();
-        $categories->user_id = Auth::user()->id;
-        $categories->categorie_nom = $request->title;
-        $categories->categorie_description = $request->description;
+            $categories = new CategorieConso();
+            $categories->user_id = Auth::user()->id;
+            $categories->categorie_nom = $request->title;
+            $categories->categorie_description = $request->description;
 
-        $categories->save();
-        return back()->with(session()->flash('alert-success', "Categorie Ajoutée "));
+            $categories->save();
+            return back()->with(session()->flash('alert-success', "Categorie Ajoutée "));
+              // $input['categorie_nom'] = $request['title'];
 
-        //dd($categories);
+        // $rules = array('categorie_nom' => 'unique:categorie_consos,categorie_nom');
+
+        // $validator = Validator::make($input, $rules);
+
+        // if ($validator->fails())
+        // {
+        //     return back()->with(session()->flash('alert-success', "Cette categorie est déjà enregistrée. Vous êtes sûr de ne pas avoir cette categorie ?"));
+        // }
+        // else{
     }
 
     //renvoie la vue edit
@@ -242,26 +278,35 @@ class RestaurantController extends Controller
             'password' => 'required',
             'password_confirmation' => 'required'
         ]);
+        $input['email'] = $request['email'];
 
-        $restau = new User();
-        $restau->nameEnseigne = $request->nom;
-        $restau->name = null;
-        $restau->email = $request->email;
-        $restau->type = $request->type;
-        $restau->statut = 'enseigne';
-        $restau->is_actived  = 0;
-        $restau->is_admin = 0;
-        $restau->approved = 0;
-        $restau->password = Hash::make($request->password);
-        $restau->save();
+        $rules = array('email' => 'unique:users,email');
 
-        Etablissement::create([
-            'user_id' => $restau->id,
-            'longitude' => $request->longitude,
-            'latitude' => $request->latitude,
-        ]);
+        $validator = Validator::make($input, $rules);
 
-        return redirect('login')->with(session()->flash('alert-success', "Votre demande de creation de compte a bien été enregistré, il sera validé sous peu de temps.Merci!!!  "));
+        if ($validator->fails())
+        {
+            return back()->with(session()->flash('alert-success', "Cette adresse e-mail est déjà enregistrée. Vous êtes sûr de ne pas avoir de compte ?"));
+        }else{
+            $restau = new User();
+            $restau->nameEnseigne = $request->nom;
+            $restau->name = null;
+            $restau->email = $request->email;
+            $restau->type = $request->type;
+            $restau->statut = 'enseigne';
+            $restau->is_actived  = 0;
+            $restau->is_admin = 0;
+            $restau->approved = 0;
+            $restau->password = Hash::make($request->password);
+            $restau->save();
+
+            Etablissement::create([
+                'user_id' => $restau->id,
+                'longitude' => $request->longitude,
+                'latitude' => $request->latitude,
+            ]);
+            return redirect('login')->with(session()->flash('alert-success', "Votre demande de creation de compte a bien été enregistré, il sera validé sous peu de temps.Merci!!!  "));
+        }
     }
 
     // Fonction qui renvoie la vue rechercher
@@ -275,11 +320,27 @@ class RestaurantController extends Controller
 
     public function searchAutomatic(Request $request)
     {
-        $datas= User::select('nameEnseigne')
-                            ->where('nameEnseigne', 'like', "%{$request->term}%")
-                            ->pluck('nameEnseigne');
-        return response()->json($datas);
+        $input = $request->all();
+
+        $data = User::select("nameEnseigne")
+                ->where("nameEnseigne","LIKE","%{$input['query']}%")
+                ->get();
+
+      $enseignes = [];
+
+      if(count($data) > 0){
+
+            foreach($data as $enseigne){
+                $enseignes[] = $enseigne->nameEnseigne;
+            }
+        }
+        return response()->json($enseignes);
     }
+        // $datas= User::select('nameEnseigne')
+        //                     ->where('nameEnseigne', 'like', "%{$request->term}%")
+        //                     ->pluck('nameEnseigne');
+        // return response()->json($datas);
+
 
 
 

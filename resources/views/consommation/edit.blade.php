@@ -22,9 +22,11 @@
                         <div class="form-group row justify-content-center">
                             <div class="col-md-8">
                                 <label>Consommation</label>
-                                <select class="form-select" aria-label="" name="conso_id">
+                                <select class="form-select" aria-label="" name="conso_id" required>
                                     @foreach ($conso as $cat )
+                                    @if(Auth::user()->id === $cat->user_id)
                                         <option value="{{ $cat->id }}" >{{ $cat->consommation_titre }}</option>
+                                    @endif
                                     @endforeach
                                 </select>
                                 @error('categorie')
@@ -49,7 +51,7 @@
                             <div class="form-group row justify-content-center">
                                 <div class="col-md-8">
                                     <label>Description</label>
-                                <textarea id="description" type="text" rows="5" class="form-control @error('description') is-invalid @enderror" name="description" placeholder="Description">{{ $options->option_conso_description }}</textarea>
+                                <textarea id="description" type="text" rows="5" class="form-control @error('description') is-invalid @enderror" name="description" placeholder="Description" required>{{ $options->option_conso_description }}</textarea>
                                     @error('description')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>

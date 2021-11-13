@@ -20,9 +20,10 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{asset('css/style.css')}}" rel="stylesheet">
     <link href="{{asset('font-awesome-4.7.0/css/font-awesome.min.css')}}" rel="stylesheet">
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js" integrity="sha512-HWlJyU4ut5HkEj0QsK/IxBCY55n5ZpskyjVlAoV9Z7XQwwkqXoYdCIC93/htL3Gu5H3R4an/S0h2NXfbZk3g7w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
-<body>
+<body style="background:#F7F8F8">
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -55,6 +56,13 @@
                                 </li>
                             @endif
                         @else
+                            @if ( Auth::user()->statut == "client" )
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{url('listesEnseignes')}}">
+                                        Listes Enseignes
+                                    </a>
+                                </li>
+                            @endif
                             @if ( Auth::user()->statut == "enseigne" )
                                 <li class="nav-item">
                                     <a class="nav-link"   href="{{url('home/restaurant')}}">

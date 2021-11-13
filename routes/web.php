@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DataController;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -64,6 +65,7 @@ Route::patch('/mon-compte/{user}/update',[RestaurantController::class, 'update']
 // Mon compte profile client
 Route::get('/mon-compte-client/{user}/edit',[ClientController::class,'edit'])->name('moncompteClient');
 Route::patch('/mon-compte-client/{user}/update',[ClientController::class, 'update'])->name('client.updateCompte');
+Route::get('/listesEnseignes',[ClientController::class,'listes'])->name('listesEnseignes');
 
 //Auth
 Route::post('/add-client',[ClientController::class,'store'])->name('client.store');
@@ -79,8 +81,13 @@ Route::get('/verification/{verification}',[ClientController::class, 'verify'])->
 // Verification compte restaurant par un admin
 Route::get('/admin',[AdminController::class,'admin']);
 Route::get('approved/{user}',[AdminController::class,'approved'])->name('approved');
-Route::get('search-automatic/{id}',[RestaurantController::class,'searchAutomatic']);
-Route::get('search',[RestaurantController::class,'search']);
+
+// recherche
+Route::get('search-automatic',[RestaurantController::class,'searchAutomatic'])->name('autocomplete');
+Route::get('search',[RestaurantController::class,'search'])->name('search');
+
+Route::get('qrcode', [RestaurantController::class, 'homeRestaurant'])->name('generate');
+Route::get('pdf', [RestaurantController::class, 'pdf'])->name('pdf');
 
 Auth::routes();
 

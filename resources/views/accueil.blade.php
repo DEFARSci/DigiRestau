@@ -1,4 +1,4 @@
-@extends('layouts.header')
+@extends('layouts.app')
 @section('content')
 @include('restaurant.search')
 <main class="container py-4">
@@ -11,27 +11,27 @@
       </div>
     </div>
 
-    <div class="row mb-2">
-      @foreach ($enseignes as $enseigne)
-      <div class="col-md-6">
-          <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-            <div class="col p-4 d-flex flex-column position-static">
-              <strong class="d-inline-block mb-2 text-primary">{{ $enseigne->user->name }}</strong>
-              <h3 class="mb-0">Type: {{ $enseigne->user->type }}</h3>
-              <p class="card-text mb-auto">This is a wider card with supporting text below as a natural lead-in to additional content.</p>
-              <a href="{{ route('voirMenu',$enseigne->user->id) }}" class="stretched-link btn btn-dark">Voir le menu</a>
-            </div>
-            <div class="col-auto d-none d-lg-block">
-              @if($enseigne->etablissement_logo != null)
-                  <img src="/photoProfile/{{$enseigne->etablissement_logo}}" width="250" height="250"/>
-              @else
-                  <img src="{{asset('photoProfile/default.jpg')}}" alt="profile" width="250" height="250">
-              @endif
-            </div>
-          </div>
-
-      </div>
-      @endforeach
+    <div class="row justify-content-center">
+        @foreach ($enseignes as $enseigne)
+        <div class="col-md-4">
+                <div class="card" style="width: 18rem; background:#F7F8F8">
+                    @if($enseigne->etablissement_logo != null)
+                        <img src="/photoProfile/{{$enseigne->etablissement_logo}}" height="300px"/>
+                    @else
+                        <img src="{{asset('photoProfile/default.jpg')}}" alt="profile" height="300px">
+                    @endif
+                    <div class="card-body">
+                    <h5 class="card-title text-center" style="font-weight: bold;">{{ $enseigne->user->nameEnseigne }}</h5>
+                    <span class="text-success" style="font-weight: bold; font-family:poppins">{{ $enseigne->user->type }}</span>
+                    <p class="card-text flex-end">
+                        <span class=""><i class="fa fa-map-marker" aria-hidden="true"></i> {{ $enseigne->etablissement_adresse }}</span><br>
+                        <span class=""><i class="fa fa-mobile" aria-hidden="true"></i> {{ $enseigne->etablissement_numero_tel }}</span>
+                    </p>
+                    <a href="{{ route('voirMenu',$enseigne->user->id) }}" class="stretched-link btn btn-dark" style="width:250px">Voir menu</a>
+                </div>
+                </div>
+        </div>
+        @endforeach
     </div>
 
 

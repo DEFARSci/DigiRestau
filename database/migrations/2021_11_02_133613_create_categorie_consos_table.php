@@ -16,7 +16,7 @@ class CreateCategorieConsosTable extends Migration
         Schema::create('categorie_consos', function (Blueprint $table) {
             $table->id();
             $table->string('categorie_nom');
-            $table->string('categorie_description');
+            $table->string('categorie_description')->nullable();
             $table->timestamps();
 
             $table->unsignedBigInteger('user_id');

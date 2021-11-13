@@ -17,7 +17,7 @@ class CreateOptionConsommationsTable extends Migration
             $table->id();
             $table->float('option_conso_prix');
             $table->string('option_conso_titre');
-            $table->string('option_conso_description');
+            $table->string('option_conso_description')->nullable();
             $table->timestamps();
 
             $table->unsignedBigInteger('consommation_id');

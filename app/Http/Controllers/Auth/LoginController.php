@@ -53,10 +53,13 @@ class LoginController extends Controller
             if(auth()->attempt(array('approved' => 1,'is_actived' => 1,'is_admin' => 1,'statut' => "admin", 'email' => $user['email'], 'password' => $user['password'])))
             {
                 return redirect('/admin');
+
             }elseif(auth()->attempt(array('is_actived' => 1,'statut' => "client", 'email' => $user['email'], 'password' => $user['password'])))
             {
                 return redirect('home/client');
+
             }elseif(auth()->attempt(array('approved' => 1,'statut' => "enseigne", 'email' => $user['email'], 'password' => $user['password']))){
+
                 return redirect('home/restaurant');
             }else{
                 return redirect('login')->with(session()->flash('alert-danger', "Votre compte n'est pas activé!"));

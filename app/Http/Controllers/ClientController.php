@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Mail\EMail;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Client;
+use App\Models\Etablissement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
@@ -37,6 +39,23 @@ class ClientController extends Controller
             'password_confirmation' => 'required'
         ]);
 
+        $request->validate([
+            'nom' => 'required',
+            'email' => 'required',
+            'password' => 'required',
+            'password_confirmation' => 'required'
+        ]);
+        $input['email'] = $request['email'];
+
+        $rules = array('email' => 'unique:users,email');
+
+        $validator = Validator::make($input, $rules);
+
+        if ($validator->fails())
+        {
+            return back()->with(session()->flash('alert-success', "Cette adresse e-mail est déjà enregistrée. Vous êtes sûr de ne pas avoir de compte ?"));
+        }else{
+
         $client = new User();
         $client->name = $request->nom;
         $client->nameEnseigne = null;
@@ -55,6 +74,13 @@ class ClientController extends Controller
         Mail::to($request->email)->send(new EMail($client));
 
         return redirect('login')->with(session()->flash('alert-success', "Votre demande de creation de compte a bien été enregistré, valider votre compte.Merci!!!  "));
+    }
+    }
+
+    // listes des enseignes
+    public function listes(){
+        $listeEnseignes =  Etablissement::has('user')->get();
+        return view('client.listeEnseigne',compact('listeEnseignes'));
     }
      // Fonction qui permet de valider le compte
      public function verify($verification)

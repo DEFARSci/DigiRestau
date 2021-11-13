@@ -101,7 +101,6 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-
                                         <button type="submit" class="btn btn-primary">
                                             {{ __('Ajouter') }}
                                         </button>
@@ -129,9 +128,11 @@
                                     <div class="form-group row justify-content-center">
                                         <div class="col-md-8">
                                             <label>Categorie</label>
-                                            <select class="form-select" aria-label="" name="categorie">
+                                            <select class="form-select" aria-label="" name="categorie" required>
                                                 @foreach ($cateConso as $cat )
-                                                    <option value="{{ $cat->id }}" >{{ $cat->categorie_nom }}</option>
+                                                @if(Auth::user()->id === $cat->user_id)
+                                                    <option value="{{ $cat->id }}">{{ $cat->categorie_nom }}</option>
+                                                @endif
                                                 @endforeach
                                             </select>
                                             @error('categorie')
@@ -218,9 +219,11 @@
                                     <div class="form-group row justify-content-center">
                                         <div class="col-md-8">
                                             <label>Consommation</label>
-                                            <select class="form-select" aria-label="" name="conso">
+                                            <select class="form-select" aria-label="" name="conso" required>
                                                 @foreach ($Consommation as $con )
+                                                @if(Auth::user()->id === $con->user_id)
                                                     <option value="{{ $con->id }}" >{{ $con->consommation_titre }}</option>
+                                                @endif
                                                 @endforeach
                                             </select>
                                             @error('conso')
@@ -257,7 +260,7 @@
                                     <div class="form-group row justify-content-center">
                                         <div class="col-md-8">
                                             <label>Prix</label>
-                                            <input id="prix" type="text" class="form-control @error('prix') is-invalid @enderror" name="prix" placeholder="Prix">
+                                            <input id="prix" type="text" class="form-control @error('prix') is-invalid @enderror" name="prix" placeholder="Prix" required>
 
                                             @error('prix')
                                                 <span class="invalid-feedback" role="alert">
@@ -276,57 +279,95 @@
                         </div>
                     </div>
                       {{-- Liste Options Conso --}}
-                <button type="button" class="btn text-white" data-bs-toggle="modal" data-bs-target="#static1" style="background:black">
-                    {{ __('OPTIONS') }}
-                </button>
+                    <button type="button" class="btn text-white" data-bs-toggle="modal" data-bs-target="#static1" style="background:black">
+                        {{ __('OPTIONS') }}
+                    </button>
+                    <!-- Modal -->
+                    <div class="modal fade" id="static1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Liste Options Consommations</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <td>Option</td>
+                                            <td>Consommation</td>
+                                            <td>Description</td>
+                                            <td>Prix</td>
+                                            <td colspan="2">Action</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($optionconso as $option )
+                                            @if(Auth::user()->id === $option->user_id)
+                                                <tr>
+                                                    <td>{{ $option->option_conso_titre }}</td>
+                                                    <td>{{ $option->consomation->consommation_titre }}</td>
+                                                    <td>{{ $option->option_conso_description }}</td>
+                                                    <td>{{ $option->option_conso_prix }}</td>
+                                                    <td>
+                                                        <a href="{{ route('delete-option',$option->id) }}" >
+                                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                                        </a>
+                                                        <a href="{{ route('edit-option',$option->id) }}" >
+                                                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                                                        </a>
+                                                    </td>
 
-                <!-- Modal -->
-                <div class="modal fade" id="static1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">Categorie</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </tr>
+                                            @endif
+                                        @endforeach
+
+                                    </tbody>
+                                </table>
+                            </div>
+
                         </div>
-                        <div class="modal-body">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <td>Option</td>
-                                        <td>Consommation</td>
-                                        <td>Description</td>
-                                        <td>Prix</td>
-                                        <td colspan="2">Action</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($optionconso as $option )
-                                        @if(Auth::user()->id === $option->user_id)
-                                            <tr>
-                                                <td>{{ $option->option_conso_titre }}</td>
-                                                <td>{{ $option->consomation->consommation_titre }}</td>
-                                                <td>{{ $option->option_conso_description }}</td>
-                                                <td>{{ $option->option_conso_prix }}</td>
-                                                <td>
-                                                    <a href="{{ route('delete-option',$option->id) }}" >
-                                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                                    </a>
-                                                    <a href="{{ route('edit-option',$option->id) }}" >
-                                                        <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                    </a>
-                                                </td>
-
-                                            </tr>
-                                        @endif
-                                    @endforeach
-
-                                </tbody>
-                            </table>
                         </div>
+                    </div>
+                     {{-- Liste users clients --}}
+                     <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Generer
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <button type="button"  class="dropdown-item" data-bs-toggle="modal" data-bs-target="#staticGenerate">
+                                Voir Qr Code
+                            </button>
 
+                          <a class="dropdown-item" href="{{ route('pdf') }}">Telecharger qr code</a>
+                        </div>
+                      </div>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="staticGenerate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="staticBackdropLabel">Generer un qr Code</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <img src="data:image/png;base64, {!! base64_encode($qrcode) !!} "><br/>
+
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                        </div>
                     </div>
-                    </div>
-                </div>
                </div>
 
                {{-- Liste des consommations --}}
@@ -349,11 +390,19 @@
                                     @if(Auth::user()->id === $con->user_id)
                                         <tr>
                                             <td>
-                                                <img src="{{asset('storage'.'/'.$con->consommation_image)}}" width="100">
+                                                @if($con->consommation_image != null)
+                                                    <img src="{{asset('storage'.'/'.$con->consommation_image)}}" width="100">
+                                                @else
+                                                    <img src="{{asset('storage/conso.png')}}" alt="profile"  width="100">
+                                                @endif
                                             </td>
                                             <td>{{ $con->categorie->categorie_nom }}</td>
                                             <td>{{ $con->consommation_titre }}</td>
-                                            <td>{{ $con->consommation_prix }} CFA</td>
+                                                @if ($con->consommation_prix != null)
+                                                    <td>{{ $con->consommation_prix }} CFA</td>
+                                                @else
+                                                    <td>0 CFA</td>
+                                                @endif
                                             <td>
                                                 @if($con->statut == 0)
                                                     <form method="post" action="{{route('unactive.conso',$con->id)}}" method="post">
@@ -375,11 +424,11 @@
                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </a>
                                                  {{-- UPDATE CONSO --}}
-                                                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#static">
+                                                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#static-{{ $con->id }}">
                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
                                                 </button>
                                                   <!-- Modal -->
-                                                <div class="modal fade" id="static" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                <div class="modal fade" id="static-{{ $con->id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                                     <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -415,7 +464,7 @@
                                                                 </div>
                                                                 <div class="form-group row justify-content-center">
                                                                     <div class="col-md-8">
-                                                                        <label>Nom</label>
+                                                                        <label>Prix</label>
                                                                         <input id="prix" type="text" class="form-control @error('prix') is-invalid @enderror" name="prix" placeholder="Prix"  value="{{ $con->consommation_prix }}" required>
 
                                                                         @error('prix')
@@ -444,7 +493,9 @@
                                                                         <label>Categorie</label>
                                                                         <select class="form-select" aria-label="" name="categorie">
                                                                             @foreach ($cateConso as $cat )
-                                                                                <option value="{{ $cat->id }}" >{{ $cat->categorie_nom }}</option>
+                                                                            @if(Auth::user()->id === $cat->user_id)
+                                                                                <option value="{{ $cat->id }}">{{ $cat->categorie_nom }}</option>
+                                                                            @endif
                                                                             @endforeach
                                                                         </select>
                                                                         @error('categorie')

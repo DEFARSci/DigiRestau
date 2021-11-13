@@ -50,7 +50,7 @@
                         <div class="form-group row justify-content-center">
                             <div class="col-md-8">
                                 <label>Nom</label>
-                                <input id="nom" type="text" class="form-control @error('nom') is-invalid @enderror" placeholder="Nom" name="nom" value="{{ old('nom') ?? $user->name }}"  required>
+                                <input id="nom" type="text" class="form-control @error('nom') is-invalid @enderror" placeholder="Nom" name="nom" value="{{ old('nom') ?? $user->nameEnseigne }}"  required>
 
                                 @error('nom')
                                     <span class="invalid-feedback" role="alert">

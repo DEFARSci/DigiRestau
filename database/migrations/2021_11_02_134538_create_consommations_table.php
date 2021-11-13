@@ -16,9 +16,9 @@ class CreateConsommationsTable extends Migration
         Schema::create('consommations', function (Blueprint $table) {
             $table->id();
             $table->string('consommation_titre');
-            $table->string('consommation_description');
+            $table->string('consommation_description')->nullable();
             $table->string('consommation_image')->nullable();
-            $table->double('consommation_prix');
+            $table->double('consommation_prix')->nullable();
             $table->boolean('statut')->default(0);
 
             $table->timestamps();

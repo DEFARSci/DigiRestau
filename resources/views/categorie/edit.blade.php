@@ -34,7 +34,7 @@
                             <div class="form-group row justify-content-center">
                                 <div class="col-md-8">
                                     <label>Description</label>
-                                <textarea id="description" type="text" rows="5" class="form-control @error('description') is-invalid @enderror" name="description" placeholder="Description">{{ $categories->categorie_description }}</textarea>
+                                <textarea id="description" type="text" rows="5" class="form-control @error('description') is-invalid @enderror" name="description" placeholder="Description" required>{{ $categories->categorie_description }}</textarea>
                                     @error('description')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -42,9 +42,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-
+                            <div style="text-align: center">
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Ajouter') }}
                                 </button>
