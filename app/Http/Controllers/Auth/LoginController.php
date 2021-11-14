@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 class LoginController extends Controller
@@ -50,17 +51,17 @@ class LoginController extends Controller
         $email = User::where('email',$user['email'])->count();
         if($email > 0)
         {
-            if(auth()->attempt(array('approved' => 1,'is_actived' => 1,'is_admin' => 1,'statut' => "admin", 'email' => $user['email'], 'password' => $user['password'])))
-            {
+            //admin
+            if(Auth::attempt(['email' => $user['email'], 'password' => $user['password'], 'is_admin' => 1])) {
                 return redirect('/admin');
+            }
 
-            }elseif(auth()->attempt(array('is_actived' => 1,'statut' => "client", 'email' => $user['email'], 'password' => $user['password'])))
-            {
-                return redirect('home/client');
+            //client
+            if(Auth::attempt(['email' => $user['email'], 'password' => $user['password'], 'statut' => 'client','is_actived' => 1])) {
+                return redirect('/home/client');
 
-            }elseif(auth()->attempt(array('approved' => 1,'statut' => "enseigne", 'email' => $user['email'], 'password' => $user['password']))){
-
-                return redirect('home/restaurant');
+            }elseif(Auth::attempt(['email' => $user['email'], 'password' => $user['password'], 'statut' => 'enseigne','is_actived' => 1,'approved' => 1])) {
+                return redirect('/home/restaurant');
             }else{
                 return redirect('login')->with(session()->flash('alert-danger', "Votre compte n'est pas activé!"));
             }

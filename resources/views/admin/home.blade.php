@@ -44,7 +44,6 @@
                                                 Active
                                             @endif
                                         </a>
-                                        <a href="#">Supprimer</a>
                                     </td>
                                 </tr>
                             @endif

@@ -11,9 +11,9 @@
       </div>
     </div>
 
-    <div class="row justify-content-center">
+    <div class="row">
         @foreach ($enseignes as $enseigne)
-        <div class="col-md-4">
+        <div class="col-md-4 py-2">
                 <div class="card" style="width: 18rem; background:#F7F8F8">
                     @if($enseigne->etablissement_logo != null)
                         <img src="/photoProfile/{{$enseigne->etablissement_logo}}" height="300px"/>

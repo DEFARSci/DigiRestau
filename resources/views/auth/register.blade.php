@@ -99,9 +99,9 @@
                                 <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Nom Restaurant') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="name" type="text" class="form-control @error('nom') is-invalid @enderror" name="nom" value="{{ old('nom') }}" required autocomplete="name" autofocus>
+                                    <input id="name" type="text" class="form-control @error('nameEnseigne') is-invalid @enderror" name="nameEnseigne" value="{{ old('nameEnseigne') }}" required autocomplete="nameEnseigne" autofocus>
 
-                                    @error('nom')
+                                    @error('nameEnseigne')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>

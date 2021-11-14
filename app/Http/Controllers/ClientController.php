@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
@@ -83,9 +84,9 @@ class ClientController extends Controller
         return view('client.listeEnseigne',compact('listeEnseignes'));
     }
      // Fonction qui permet de valider le compte
-     public function verify($verification)
+     public function verify($id, $verification)
      {
-         $user = User::where('is_actived',$verification)->first();
+         $user = User::where('id', $id)->where('is_actived',$verification)->first();
          if($user)
          {
              $user->is_actived = 1;

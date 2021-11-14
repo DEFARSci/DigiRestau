@@ -73,10 +73,13 @@ Route::get('/home/client',[ClientController::class,'homeClient'])->name('homeCli
 Route::post('/connexion',[LoginController::class,'addLogin'])->name('login.addLogin');
 
 Route::post('/add-restaurant',[RestaurantController::class,'store'])->name('restaurant.store');
-Route::get('/home/restaurant',[RestaurantController::class,'homeRestaurant'])->name('accueilRestaurant');
+Route::get('/home/restaurant',[RestaurantController::class,'homeRestaurant'])->middleware('auth')->name('accueilRestaurant');
 
 // Verification Compte client
-Route::get('/verification/{verification}',[ClientController::class, 'verify'])->name('verification_user');
+Route::get('/verification/{id}/{verification}',[ClientController::class, 'verify'])->name('verification_user');
+
+// Verification Compte enseigne
+Route::get('/verificationEnseigne/{id}/{verification}',[RestaurantController::class, 'verifyByPersonnel'])->name('verification_userEnseigne');
 
 // Verification compte restaurant par un admin
 Route::get('/admin',[AdminController::class,'admin']);

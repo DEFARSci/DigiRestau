@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EMailPersonnel;
 use Input;
 use App\Models\CategorieConso;
 use App\Models\Consommation;
@@ -102,7 +103,7 @@ class RestaurantController extends Controller
 
             return back()->with(session()->flash('alert-success', "Consommation Ajoutée "));
         }else{
-            return back()->with(session()->flash('alert-success', "Vous devez mettre a jour votre profil "));
+            return back()->with(session()->flash('alert-danger', "Vous devez mettre a jour votre adresse et numero de telephone "));
 
         }
 
@@ -213,17 +214,6 @@ class RestaurantController extends Controller
 
             $categories->save();
             return back()->with(session()->flash('alert-success', "Categorie Ajoutée "));
-              // $input['categorie_nom'] = $request['title'];
-
-        // $rules = array('categorie_nom' => 'unique:categorie_consos,categorie_nom');
-
-        // $validator = Validator::make($input, $rules);
-
-        // if ($validator->fails())
-        // {
-        //     return back()->with(session()->flash('alert-success', "Cette categorie est déjà enregistrée. Vous êtes sûr de ne pas avoir cette categorie ?"));
-        // }
-        // else{
     }
 
     //renvoie la vue edit
@@ -273,23 +263,24 @@ class RestaurantController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nom' => 'required',
+            'nameEnseigne' => 'required',
             'email' => 'required',
             'password' => 'required',
             'password_confirmation' => 'required'
         ]);
         $input['email'] = $request['email'];
+        $input['nameEnseigne'] = $request['nameEnseigne'];
 
-        $rules = array('email' => 'unique:users,email');
+        $rules = array('email' => 'unique:users,email', 'nameEnseigne' => 'unique:users,nameEnseigne');
 
         $validator = Validator::make($input, $rules);
 
         if ($validator->fails())
         {
-            return back()->with(session()->flash('alert-success', "Cette adresse e-mail est déjà enregistrée. Vous êtes sûr de ne pas avoir de compte ?"));
+            return back()->with(session()->flash('alert-success', "L'adresse e-mail ou le nom du restaurant est déjà enregistrée?"));
         }else{
             $restau = new User();
-            $restau->nameEnseigne = $request->nom;
+            $restau->nameEnseigne = $request->nameEnseigne;
             $restau->name = null;
             $restau->email = $request->email;
             $restau->type = $request->type;
@@ -305,7 +296,25 @@ class RestaurantController extends Controller
                 'longitude' => $request->longitude,
                 'latitude' => $request->latitude,
             ]);
+
+            Mail::to($request->email)->send(new EMailPersonnel($restau));
+
             return redirect('login')->with(session()->flash('alert-success', "Votre demande de creation de compte a bien été enregistré, il sera validé sous peu de temps.Merci!!!  "));
+        }
+    }
+
+    // Fonction qui permet de verifier un compte par gmail
+    public function verifyByPersonnel($id, $verification)
+    {
+        $user = User::where('id', $id)->where('is_actived',$verification)->first();
+        if($user)
+        {
+            $user->is_actived = 1;
+            $user->update();
+
+            return redirect()->route('login')->with(session()->flash('alert-success', ' Compte verifié. Connectez-vous!'));
+        }else{
+            return redirect()->route('login')->with(session()->flash('alert-danger', 'Email deja verifié!'));
         }
     }
 
