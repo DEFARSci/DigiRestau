@@ -1,7 +1,7 @@
 <div class="container">
     <div class="">
-        <form class="d-flex">
-                <input class="form-control me-2 typeahead"  type="text" placeholder="Search" aria-label="Search">
+        <form class="d-flex" action="{{ route('autocomplete') }}" method="GET">
+                <input class="form-control me-2 typeahead" name="query" value="{{ request()->query("query") }}"  type="text" placeholder="Search" aria-label="Search">
         </form>
     </div>
  </div>

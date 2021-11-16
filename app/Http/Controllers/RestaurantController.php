@@ -330,9 +330,9 @@ class RestaurantController extends Controller
     public function searchAutomatic(Request $request)
     {
         $input = $request->all();
-
+        $q = $input['query'];
         $data = User::select("nameEnseigne")
-                ->where("nameEnseigne","LIKE","%{$input['query']}%")
+                ->where("nameEnseigne","LIKE","%{$q}%")
                 ->get();
 
       $enseignes = [];
@@ -343,7 +343,12 @@ class RestaurantController extends Controller
                 $enseignes[] = $enseigne->nameEnseigne;
             }
         }
-        return response()->json($enseignes);
+        if($request->ajax()){
+            return response()->json($enseignes);
+
+        }
+
+        return view('restaurant.searchAffich')->with('enseignes',$enseignes);
     }
         // $datas= User::select('nameEnseigne')
         //                     ->where('nameEnseigne', 'like', "%{$request->term}%")

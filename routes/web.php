@@ -89,6 +89,7 @@ Route::get('approved/{user}',[AdminController::class,'approved'])->name('approve
 Route::get('search-automatic',[RestaurantController::class,'searchAutomatic'])->name('autocomplete');
 Route::get('search',[RestaurantController::class,'search'])->name('search');
 
+
 Route::get('qrcode', [RestaurantController::class, 'homeRestaurant'])->name('generate');
 Route::get('pdf', [RestaurantController::class, 'pdf'])->name('pdf');
 

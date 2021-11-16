@@ -408,14 +408,14 @@
                                                     <form method="post" action="{{route('unactive.conso',$con->id)}}" method="post">
                                                         @csrf
                                                         @method('PUT')
-                                                        <button type="submit" class="btn btn-dark">Activer</button>
+                                                        <button type="submit" class="btn btn-dark">Disponible</button>
 
                                                     </form>
                                                 @else
                                                         <form method="post" action="{{route('active.conso',$con->id)}}" method="post">
                                                             @csrf
                                                             @method('PUT')
-                                                            <button type="submit" class="btn btn-secondary text-white">Desactiver</button>
+                                                            <button type="submit" class="btn btn-secondary text-white">Rupture</button>
                                                         </form>
                                                 @endif
                                             </td>
