@@ -13,7 +13,7 @@
       </div>
       <div class="row">
             @foreach ($conso as $con)
-            <div class="col-md-3 m-3">
+            <div class="col-md-4">
               <div class="card" style="width: 18rem; background:#F7F8F8">
                 @if($con->consommation_image != null)
                     <img src="{{asset('storage'.'/'.$con->consommation_image)}}" height="287" width="287">

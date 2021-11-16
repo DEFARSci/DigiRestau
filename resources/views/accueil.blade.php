@@ -21,7 +21,7 @@
                         <img src="{{asset('photoProfile/default.jpg')}}" alt="profile" height="300px">
                     @endif
                     <div class="card-body">
-                    <h5 class="card-title text-center" style="font-weight: bold;">{{ $enseigne->user->nameEnseigne }}</h5>
+                    <h5 class="card-title text-center" style="font-weight: bold;">{{ $enseigne->user->name }}</h5>
                     <span class="text-success" style="font-weight: bold; font-family:poppins">{{ $enseigne->user->type }}</span>
                     <p class="card-text flex-end">
                         <span class=""><i class="fa fa-map-marker" aria-hidden="true"></i> {{ $enseigne->etablissement_adresse }}</span><br>

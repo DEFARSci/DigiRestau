@@ -27,7 +27,7 @@
                             @foreach ($users as $user )
                             @if($user->statut == 'enseigne')
                                 <tr>
-                                    <td>{{ $user->nameEnseigne }}</td>
+                                    <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>
                                         @if ($user->approved == 0)

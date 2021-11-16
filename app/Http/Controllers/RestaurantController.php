@@ -43,7 +43,7 @@ class RestaurantController extends Controller
         // $qrcode = QrCode::format('png')->size(400)->errorCorrection('H')->generate('http://127.0.0.1:8000/voirMenu/'.$generate);
         //     $pdf = PDF::loadView('pdf', compact('qrcode'));
         //     $pdf->download('invoice.pdf');
-        $qrcode = QrCode::format('png')->size(400)->errorCorrection('H')->generate($generate);
+        $qrcode = QrCode::format('png')->size(400)->errorCorrection('H')->generate('http://127.0.0.1:8000/voirMenu/'.$generate);
 
         return view('restaurant.home',compact('cateConso','conso','categories','Consommation','optionconso','qrcode','generate'));
     }
@@ -263,15 +263,15 @@ class RestaurantController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nameEnseigne' => 'required',
+            'name' => 'required',
             'email' => 'required',
             'password' => 'required',
             'password_confirmation' => 'required'
         ]);
         $input['email'] = $request['email'];
-        $input['nameEnseigne'] = $request['nameEnseigne'];
+        $input['name'] = $request['name'];
 
-        $rules = array('email' => 'unique:users,email', 'nameEnseigne' => 'unique:users,nameEnseigne');
+        $rules = array('email' => 'unique:users,email', 'nameEnseigne' => 'unique:users,name');
 
         $validator = Validator::make($input, $rules);
 
@@ -280,8 +280,8 @@ class RestaurantController extends Controller
             return back()->with(session()->flash('alert-success', "L'adresse e-mail ou le nom du restaurant est déjà enregistrée?"));
         }else{
             $restau = new User();
-            $restau->nameEnseigne = $request->nameEnseigne;
-            $restau->name = null;
+            $restau->name = $request->name;
+            $restau->nameE = null;
             $restau->email = $request->email;
             $restau->type = $request->type;
             $restau->statut = 'enseigne';
@@ -329,31 +329,41 @@ class RestaurantController extends Controller
 
     public function searchAutomatic(Request $request)
     {
-        $input = $request->all();
-        $q = $input['query'];
-        $data = User::select("nameEnseigne")
-                ->where("nameEnseigne","LIKE","%{$q}%")
-                ->get();
+        $query = $request->get('search');
+        $filterResult = User::where('name', 'LIKE',"%$query%")->get();
+        if($request->ajax())
+        {
+            return response()->json($filterResult);
 
-      $enseignes = [];
-
-      if(count($data) > 0){
-
-            foreach($data as $enseigne){
-                $enseignes[] = $enseigne->nameEnseigne;
-            }
-        }
-        if($request->ajax()){
-            return response()->json($enseignes);
+        }else{
+            return view('restaurant.searchAffich')->with('filterResult',$filterResult);
 
         }
 
-        return view('restaurant.searchAffich')->with('enseignes',$enseignes);
+
+    //     $input = $request->all();
+    //     $q = $input['search'];
+    //     $data = User::select("name")
+    //             ->where("name","LIKE","%{$q}%")
+    //             ->get();
+
+    //   $enseignes = [];
+
+    //   if(count($data) > 0){
+
+    //         foreach($data as $enseigne){
+    //             $enseignes[] = $enseigne->name;
+    //         }
+    //     }
+    //     return response()->json($enseignes);
+
+    //     if($request->ajax()){
+
+    //     }
+
+
     }
-        // $datas= User::select('nameEnseigne')
-        //                     ->where('nameEnseigne', 'like', "%{$request->term}%")
-        //                     ->pluck('nameEnseigne');
-        // return response()->json($datas);
+
 
 
 
