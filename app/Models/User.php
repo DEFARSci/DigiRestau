@@ -82,4 +82,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Etablissement::class);
     }
+
+    public function type()
+    {
+        return $this->hasOne(Type::class);
+    }
 }

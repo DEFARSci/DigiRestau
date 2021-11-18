@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TypeRestaurant;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -41,5 +42,22 @@ class AdminController extends Controller
             $data->save();
         }
         return redirect()->back()->with(session()->flash('alert-success', 'Mise a jour effectue!'));
+    }
+
+    //Ajout type enseigne
+    public function addType(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+        ]);
+
+        $typeR = new TypeRestaurant();
+        $typeR->type = $request->name;
+        $typeR->save();
+        return redirect()->back()->with(session()->flash('alert-success', 'Type enseigne ajoutée!'));
+    }
+    public function ListeType()
+    {
+        return view('admin.listeType');
     }
 }

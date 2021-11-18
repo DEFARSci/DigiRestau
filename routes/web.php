@@ -85,13 +85,23 @@ Route::get('/verificationEnseigne/{id}/{verification}',[RestaurantController::cl
 Route::get('/admin',[AdminController::class,'admin']);
 Route::get('approved/{user}',[AdminController::class,'approved'])->name('approved');
 
-// recherche
+// Route::get('liste-type-enseigne',[AdminController::class,'ListeType'])->name('liste-type');
+// Route::post('add-type-enseigne',[AdminController::class,'addType'])->name('add-type');
+
+// recherche par un visiteur
 Route::get('search-automatic',[RestaurantController::class,'searchAutomatic'])->name('autocomplete');
 Route::get('search',[RestaurantController::class,'search'])->name('search');
 
+// recherche par un client
+Route::get('search-automatic-enseigne',[ClientController::class,'searchEnseigneByClient'])->name('searchEnseigne');
+Route::get('search-automatic-enseigne-advanced',[ClientController::class,'searchEnseigneByClientAdvanced'])->name('searchEnseigneAdvanced');
 
 Route::get('qrcode', [RestaurantController::class, 'homeRestaurant'])->name('generate');
 Route::get('pdf', [RestaurantController::class, 'pdf'])->name('pdf');
+
+//commande
+Route::post('commander', [RestaurantController::class, 'commandeByClient'])->name('commander')->middleware('auth');
+
 
 Auth::routes();
 

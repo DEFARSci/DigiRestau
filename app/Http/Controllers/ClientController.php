@@ -15,22 +15,13 @@ use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
-    // /**
-    //  * Create a new controller instance.
-    //  *
-    //  * @return void
-    //  */
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    // }
 
-    // La vue accueil
+    // Elle retourne la vue home du restaurant
     public function homeClient()
     {
         return view('client.home');
     }
-    // elle permet  d'ajouter un client dans la BD
+    // Inscription d'un client
     public function store(Request $request)
     {
         $request->validate([
@@ -40,12 +31,6 @@ class ClientController extends Controller
             'password_confirmation' => 'required'
         ]);
 
-        $request->validate([
-            'nom' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-            'password_confirmation' => 'required'
-        ]);
         $input['email'] = $request['email'];
 
         $rules = array('email' => 'unique:users,email');
@@ -75,15 +60,44 @@ class ClientController extends Controller
         Mail::to($request->email)->send(new EMail($client));
 
         return redirect('login')->with(session()->flash('alert-success', "Votre demande de creation de compte a bien été enregistré, valider votre compte.Merci!!!  "));
-    }
+        }
     }
 
     // listes des enseignes
-    public function listes(){
-        $listeEnseignes =  Etablissement::has('user')->get();
+    public function listes()
+    {
+        $listeEnseignes =  User::has('etablissement')->get();
         return view('client.listeEnseigne',compact('listeEnseignes'));
     }
-     // Fonction qui permet de valider le compte
+
+    public function searchEnseigneByClient()
+    {
+        $query = request()->get('rechercher');
+        $listeEnseignes = User::where('name', 'LIKE',"%$query%")->get();
+        if(request()->ajax()){
+            return response()->json($listeEnseignes);
+        }else{
+            return view('client.listeEnseigne',compact('listeEnseignes'));
+        }
+    }
+
+    public function searchEnseigneByClientAdvanced()
+    {
+        $q = request()->restaurant;
+        $query = request()->get('search');
+        if($q == 'restaurant')
+        {
+            $listeEnseigne = User::where('name', 'LIKE',"%$query%")->get();
+            return response()->json($listeEnseigne);
+        }
+
+        // $query = request()->get('restau');
+        // $listeEnseigne = User::where('type', 'LIKE',"%$query%")->get();
+
+        // return response()->json($listeEnseigne);
+
+    }
+     // Fonction qui permet de valider le compte client par gmail
      public function verify($id, $verification)
      {
          $user = User::where('id', $id)->where('is_actived',$verification)->first();
@@ -139,6 +153,5 @@ class ClientController extends Controller
 
              return back()->with(session()->flash('alert-success', "Mise a jour effectuée "));
      }
-
 
 }

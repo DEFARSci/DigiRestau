@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\Mail\EMailPersonnel;
 use Input;
 use App\Models\CategorieConso;
+use App\Models\Commande;
 use App\Models\Consommation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Etablissement;
 use App\Models\OptionConsommation;
+use App\Models\Type;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
@@ -20,17 +22,9 @@ use PDF;
 
 class RestaurantController extends Controller
 {
-    // /**
-    //  * Create a new controller instance.
-    //  *
-    //  * @return void
-    //  */
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    // }
 
-    // La vue accueil
+
+    // Elle retourne la vue home du restaurant
     public function homeRestaurant()
     {
         $cateConso = CategorieConso::has('user')->get();
@@ -39,26 +33,23 @@ class RestaurantController extends Controller
         $optionconso = OptionConsommation::has('user')->get();
         $categories = CategorieConso::orderBy('id','DESC')->get();
         $generate = Consommation::where('user_id', Auth::user()->id)->get();
-        //dd($generate);
-        // $qrcode = QrCode::format('png')->size(400)->errorCorrection('H')->generate('http://127.0.0.1:8000/voirMenu/'.$generate);
-        //     $pdf = PDF::loadView('pdf', compact('qrcode'));
-        //     $pdf->download('invoice.pdf');
+
         $qrcode = QrCode::format('png')->size(400)->errorCorrection('H')->generate('http://127.0.0.1:8000/voirMenu/'.$generate);
 
         return view('restaurant.home',compact('cateConso','conso','categories','Consommation','optionconso','qrcode','generate'));
     }
 
-    public function pdf(){
+    // Elle permet de telecharger un qr code public
+    public function pdf()
+    {
         $generate = Consommation::where('user_id', Auth::user()->id)->get();
         // //dd($generate);
         $qrcode = QrCode::format('png')->size(400)->errorCorrection('H')->generate('http://127.0.0.1:8000/voirMenu/'.$generate);
             $pdf = PDF::loadView('pdf', compact('qrcode'));
             return $pdf->download('invoice.pdf');
-        // $qrcode = QrCode::format('png')->size(300)->errorCorrection('H')->generate($generate);
-
     }
 
-//
+    // Permet de manipuler l'etat des consommations
     public function makeunactive(Consommation $conso)
     {
         $conso->statut = 1;
@@ -79,6 +70,7 @@ class RestaurantController extends Controller
     {
         $telephone = Auth::user()->etablissement->etablissement_numero_tel;
         $adresse = Auth::user()->etablissement->etablissement_adresse;
+
         if($telephone != null && $adresse != null){
             $conso = new Consommation();
             $conso->user_id = Auth::user()->id;
@@ -204,7 +196,7 @@ class RestaurantController extends Controller
         return back()->with(session()->flash('alert-success', "Consommation Modifiée "));
     }
 
-    // Ajout Ctegorie conso
+    // Ajout Categorie conso
     public function addCategorieConso(Request $request)
     {
             $categories = new CategorieConso();
@@ -259,7 +251,7 @@ class RestaurantController extends Controller
             return back()->with(session()->flash('alert-success', "Mise a jour effectuée "));
     }
 
- // elle permet  d'ajouter un restaurant dans la BD
+    // elle permet  de s'inscrire en tant que enseigne
     public function store(Request $request)
     {
         $request->validate([
@@ -303,7 +295,7 @@ class RestaurantController extends Controller
         }
     }
 
-    // Fonction qui permet de verifier un compte par gmail
+    // Fonction qui permet de verifier un compte membre par gmail
     public function verifyByPersonnel($id, $verification)
     {
         $user = User::where('id', $id)->where('is_actived',$verification)->first();
@@ -339,31 +331,28 @@ class RestaurantController extends Controller
             return view('restaurant.searchAffich')->with('filterResult',$filterResult);
 
         }
-
-
-    //     $input = $request->all();
-    //     $q = $input['search'];
-    //     $data = User::select("name")
-    //             ->where("name","LIKE","%{$q}%")
-    //             ->get();
-
-    //   $enseignes = [];
-
-    //   if(count($data) > 0){
-
-    //         foreach($data as $enseigne){
-    //             $enseignes[] = $enseigne->name;
-    //         }
-    //     }
-    //     return response()->json($enseignes);
-
-    //     if($request->ajax()){
-
-    //     }
-
-
     }
 
+    public function commandeByClient(Request $request)
+    {
+
+        $commande = new Commande();
+        $commande->commande_user_id = Auth::user()->id;
+        $commande->consommation_id = $request->consommation_id;
+        $commande->optionConso_id = $request->optionConso_id;
+        $commande->quantite = $request->quantite;
+        $commande->commande_added_dateTime = now();
+        $commande->commande_startcook_dateTime = null;
+        $commande->commande_endcook_dateTime = null;
+        $commande->commande_done_dateTime = null;
+
+        if(!isset($commande->optionConso_id) && Auth::user()->statut == "client"){
+            return back()->with(session()->flash('alert-success', "Veuillez renseigner l'option de consommation"));
+        }else{
+            $commande->save();
+            return back()->with(session()->flash('alert-success', "Commande effectuée. Merci!!!"));
+        }
+    }
 
 
 

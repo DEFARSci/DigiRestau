@@ -78,10 +78,11 @@
 
                                 <select class="form-select @error('type') is-invalid @enderror" name="type" >
                                     @if($user->type )
-                                    {{-- <option selected>{{ $user->type }}</option> --}}
+                                    <option>{{ $user->type }}</option>
                                     <option >Restaurant</option>
                                     <option >Cafe</option>
                                     <option >Terasse</option>
+                                    <option >Bar</option>
                                     @endif
 
                               </select>

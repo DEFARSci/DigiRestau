@@ -2,7 +2,9 @@
 @section('content')
 @include('restaurant.search')
 <main class="container py-4">
-
+    @if(request()->input('search'))
+        <h6> {{ $filterResult->count() }} resultat(s) pour la recherche "{{ request()->search }}"</h6>
+    @endif
     <div class="row">
         @foreach ($filterResult as $filter )
             <div class="col-md-4 py-2">
@@ -24,10 +26,7 @@
                 </div>
         </div>
         @endforeach
-
     </div>
-
-
   </main>
 
 @endsection
