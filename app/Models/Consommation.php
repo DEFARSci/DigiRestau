@@ -34,4 +34,9 @@ class Consommation extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function commande()
+    {
+        return $this->hasMany(Commande::class);
+    }
 }

@@ -15,7 +15,7 @@
                 @csrf
                 @method('PATCH')
             <div class="card" style="border-radius: 20px;">
-                <div class="text-center font-weight-bold mt-4"  style="color:#3b5998; font-size:20px">{{ __('Avatar') }}</div>
+                <div class="text-center font-weight-bold mt-4"  style="color:#3b5998; font-size:20px">{{ __('LOGO') }}</div>
                 <hr>
                 <div class="card-body">
                         <div class="form-group row">

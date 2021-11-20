@@ -63,12 +63,15 @@
                                                 <br/>
                                                 <h1>Prix: {{$con->consommation_prix}} CFA</h1>
                                                 <input id="conso" type="hidden" class="form-control" value="{{$con->id}}" name="consommation_id" autocomplete="consommation_id" autofocus>
-                                                @foreach($con->optionsConso as $option)
-                                                    <input id="option" type="hidden" class="form-control" value="{{$option->id}}" name="optionConso_id" autocomplete="optionConso_id" autofocus>
-                                                @endforeach
+                                                <input id="enseigne" type="hidden" class="form-control" value="{{$con->user_id}}" name="enseigne_id" autocomplete="enseigne_id" autofocus>
                                                 <label>Quantite</label>
-                                                <input type="number" class="form-control" value="1" name="quantite" >
-
+                                                <input type="number" class="form-control" value="1" name="quantite" ><br/>
+                                                <select class="form-select  @error('type') is-invalid @enderror" name="type" required>
+                                                    <option selected>Livraison</option>
+                                                    <option >Sur place</option>
+                                                    <option >à emporter</option>
+                                                    <option >autre</option>
+                                                </select>
                                             <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
                                                     <button type="submit" class="btn btn-primary">

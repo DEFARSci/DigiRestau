@@ -101,7 +101,10 @@ Route::get('pdf', [RestaurantController::class, 'pdf'])->name('pdf');
 
 //commande
 Route::post('commander', [RestaurantController::class, 'commandeByClient'])->name('commander')->middleware('auth');
-
+Route::get('listes-commandes', [RestaurantController::class, 'commandes'])->name('mes-commandes')->middleware('auth');
+Route::get('commande-statutEncours/{commande}',[RestaurantController::class,'makeStatutEncours'])->name('makeStatutEncours.commande');
+Route::get('commande-statutLivre/{commande}',[RestaurantController::class,'makeStatutLivre'])->name('makeStatutLivre.commande');
+Route::get('commande-statutNonLivre/{commande}',[RestaurantController::class,'makeStatutNonlivre'])->name('makeStatutNonlivre.commande');
 
 Auth::routes();
 

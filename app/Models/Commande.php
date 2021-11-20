@@ -12,14 +12,17 @@ class Commande extends Model
     use HasFactory;
 
     protected $fillable = [
-        'commande_prix',
-        'commande_statut',
-        'commande_table',
-        'commande_livraison',
+        'quantite',
+        'statut',
+        'Type_livraison',
+        'numero_table',
         'commande_added_dateTime',
         'commande_startcook_dateTime',
         'commande_endcook_dateTime',
-        'commande_done_dateTime'
+        'commande_done_dateTime',
+        'consommation_id',
+        'enseigne_id',
+        'commande_user_id'
     ];
 
 
@@ -28,8 +31,13 @@ class Commande extends Model
         return $this->hasMany(OptionCommande::class);
     }
 
+    public function consommations()
+    {
+        return $this->belongsTo(Consommation::class,'consommation_id');
+    }
+
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'commande_user_id');
     }
 }

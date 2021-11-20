@@ -17,7 +17,7 @@ class CreateCommandesTable extends Migration
             $table->id();
             $table->integer('quantite');
             $table->enum('statut', ['livre', 'annulle','encours'])->default('encours');
-            $table->enum('Type_livraison', ['emporter', 'sur_place','livraison'])->default('livraison');
+            $table->string('Type_livraison');
             $table->integer('numero_table')->nullable();
             $table->date('commande_added_dateTime');
             $table->date('commande_startcook_dateTime')->nullable();
@@ -28,8 +28,8 @@ class CreateCommandesTable extends Migration
             $table->unsignedBigInteger('consommation_id');
             $table->foreign('consommation_id')->references('id')->on('consommations')->onDelete('cascade');
 
-            $table->unsignedBigInteger('optionConso_id');
-            $table->foreign('optionConso_id')->references('id')->on('option_consommations')->onDelete('cascade');
+            $table->unsignedBigInteger('enseigne_id');
+            $table->foreign('enseigne_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->unsignedBigInteger('commande_user_id');
             $table->foreign('commande_user_id')->references('id')->on('users')->onDelete('cascade');

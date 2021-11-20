@@ -65,6 +65,13 @@
                             @endif
                             @if ( Auth::user()->statut == "enseigne" )
                                 <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('mes-commandes') }}">
+                                        Mes commandes
+                                    </a>
+                                </li>
+                            @endif
+                            @if ( Auth::user()->statut == "enseigne" )
+                                <li class="nav-item">
                                     <a class="nav-link"   href="{{url('home/restaurant')}}">
                                         Mes consommations
                                     </a>

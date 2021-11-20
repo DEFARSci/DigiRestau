@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Consommation;
 use App\Models\Etablissement;
+use App\Models\OptionConsommation;
 use Illuminate\Http\Request;
 
 class AccueilController extends Controller
@@ -17,7 +18,8 @@ class AccueilController extends Controller
     public function show($user)
     {
         $conso = Consommation::where('user_id',$user)->get();
-        return view('menu.index', compact('conso'));
+        $optionConso = OptionConsommation::has('user')->get();
+        return view('menu.index', compact('conso','optionConso'));
     }
 
     public function showMenu($menu)

@@ -28,7 +28,7 @@ class RestaurantController extends Controller
     public function homeRestaurant()
     {
         $cateConso = CategorieConso::has('user')->get();
-        $Consommation = Consommation::all();
+        $Consommation = Consommation::has('user')->get();
         $conso = Consommation::has('user')->get();
         $optionconso = OptionConsommation::has('user')->get();
         $categories = CategorieConso::orderBy('id','DESC')->get();
@@ -70,7 +70,6 @@ class RestaurantController extends Controller
     {
         $telephone = Auth::user()->etablissement->etablissement_numero_tel;
         $adresse = Auth::user()->etablissement->etablissement_adresse;
-
         if($telephone != null && $adresse != null){
             $conso = new Consommation();
             $conso->user_id = Auth::user()->id;
@@ -333,28 +332,69 @@ class RestaurantController extends Controller
         }
     }
 
+    // commande fait par le client
     public function commandeByClient(Request $request)
     {
 
-        $commande = new Commande();
-        $commande->commande_user_id = Auth::user()->id;
-        $commande->consommation_id = $request->consommation_id;
-        $commande->optionConso_id = $request->optionConso_id;
-        $commande->quantite = $request->quantite;
-        $commande->commande_added_dateTime = now();
-        $commande->commande_startcook_dateTime = null;
-        $commande->commande_endcook_dateTime = null;
-        $commande->commande_done_dateTime = null;
+        $telephone = Auth::user()->client->client_adresse;
+        $adresse = Auth::user()->client->client_adresse;
+        if($telephone != null && $adresse != null)
+        {
+            $commande = new Commande();
+            $commande->commande_user_id = Auth::user()->id;
+            $commande->consommation_id = $request->consommation_id;
+            $commande->enseigne_id = $request->enseigne_id;
+            $commande->quantite = $request->quantite;
+            $commande->Type_livraison = $request->type;
+            $commande->commande_added_dateTime = now();
+            $commande->commande_startcook_dateTime = null;
+            $commande->commande_endcook_dateTime = null;
+            $commande->commande_done_dateTime = null;
 
-        if(!isset($commande->optionConso_id) && Auth::user()->statut == "client"){
-            return back()->with(session()->flash('alert-success', "Veuillez renseigner l'option de consommation"));
-        }else{
             $commande->save();
-            return back()->with(session()->flash('alert-success', "Commande effectuée. Merci!!!"));
+
+            return back()->with(session()->flash('alert-success', "Commande effectuée: Merci!!!"));
+        }else{
+            return back()->with(session()->flash('alert-danger', "Vous devez mettre a jour votre adresse et numero de telephone "));
+
         }
+
     }
 
+    public function commandes()
+    {
+        $commandes = Commande::all();
+        return view('restaurant.commandes.liste',compact('commandes'));
+    }
 
+    // Etat de la commande livre, annule, encours
+    public function makeStatutLivre(Commande $commande)
+    {
+        $commande->statut = ['livre' =>'livre'];
+        $commande->statut = 'livre';
+        $commande->update();
 
+        return back()->with(session()->flash('alert-success', "Commande livrée"));
+
+    }
+
+    public function makeStatutEncours(Commande $commande)
+    {
+        $commande->statut = ['encours' =>'encours'];
+        $commande->statut = 'encours';
+        $commande->update();
+
+        return back()->with(session()->flash('alert-success', "Commande encours"));
+    }
+
+    public function makeStatutNonlivre(Commande $commande)
+    {
+        //$commande->livreur_id = Auth::user()->id;
+        $commande->statut = ['annulle' =>'annulle'];
+        $commande->statut = 'annulle';
+        $commande->update();
+
+        return back()->with(session()->flash('alert-success', "Commande annulée"));
+    }
 
 }
