@@ -12,7 +12,6 @@ class Commande extends Model
     use HasFactory;
 
     protected $fillable = [
-        'quantite',
         'statut',
         'Type_livraison',
         'numero_table',
@@ -26,7 +25,7 @@ class Commande extends Model
     ];
 
 
-    public function optionsCommande()
+    public function optionsCommandes()
     {
         return $this->hasMany(OptionCommande::class);
     }

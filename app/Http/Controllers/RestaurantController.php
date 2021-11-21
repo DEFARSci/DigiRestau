@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Etablissement;
+use App\Models\OptionCommande;
 use App\Models\OptionConsommation;
 use App\Models\Type;
 use Illuminate\Support\Facades\Mail;
@@ -344,14 +345,23 @@ class RestaurantController extends Controller
             $commande->commande_user_id = Auth::user()->id;
             $commande->consommation_id = $request->consommation_id;
             $commande->enseigne_id = $request->enseigne_id;
-            $commande->quantite = $request->quantite;
             $commande->Type_livraison = $request->type;
+            $commande->numero_table = $request->numero;
+            $commande->option = $request->option;
             $commande->commande_added_dateTime = now();
             $commande->commande_startcook_dateTime = null;
             $commande->commande_endcook_dateTime = null;
             $commande->commande_done_dateTime = null;
 
             $commande->save();
+
+            OptionCommande::create([
+                'option_commande_commande_id' => $commande->id,
+                'option_commande_consommation_id' => $commande->consommation_id,
+                'quantite' => $request->quantite,
+            ]);
+
+
 
             return back()->with(session()->flash('alert-success', "Commande effectuée: Merci!!!"));
         }else{
@@ -363,7 +373,7 @@ class RestaurantController extends Controller
 
     public function commandes()
     {
-        $commandes = Commande::all();
+        $commandes = Commande::has('user')->get();
         return view('restaurant.commandes.liste',compact('commandes'));
     }
 

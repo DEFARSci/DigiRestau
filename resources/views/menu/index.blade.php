@@ -34,9 +34,6 @@
                         <p class="card-text">0 CFA</p>
                     @endif
                     <p class="card-text text-success text-uppercase">{{$con->categorie->categorie_nom}}</p>
-                    @foreach($con->optionsConso as $option)
-                        <p class="card-text text-right">#{{$option->option_conso_titre}}</p>
-                    @endforeach
                     @if($con->statut == 0)
                        <!-- Button commander -->
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commander-{{$con->id}}">
@@ -66,13 +63,33 @@
                                                 <input id="enseigne" type="hidden" class="form-control" value="{{$con->user_id}}" name="enseigne_id" autocomplete="enseigne_id" autofocus>
                                                 <label>Quantite</label>
                                                 <input type="number" class="form-control" value="1" name="quantite" ><br/>
-                                                <select class="form-select  @error('type') is-invalid @enderror" name="type" required>
-                                                    <option selected>Livraison</option>
-                                                    <option >Sur place</option>
-                                                    <option >à emporter</option>
-                                                    <option >autre</option>
-                                                </select>
-                                            <div class="modal-footer">
+                                                <select id="AddrType" onchange="showPlace()" name="type" class="form-control">
+                                                    <option value="livraison">Livraison</option>
+                                                    <option value="sur_place">Sur place</option>
+                                                    <option value="a_emporter">a emporter</option>
+                                                    <option value="autre">autre</option>
+                                                </select><br/>
+                                                    <label>Choisir une option</label>
+                                                        <select class="form-control" name="option" required >
+                                                            @foreach($con->optionsConso as $option)
+                                                                @if($option->consommation_id == $con->id)
+                                                                    <option value="{{ $option->id }}">{{$option->option_conso_titre}} || Prix: {{$option->option_conso_prix}}</option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+
+                                                {{-- @foreach ($optionConso as $option )
+                                                    @if($option->consommation_id == $con->id)
+                                                        <select class="form-control" name="option" required >
+                                                                <option selected>Choisir une option de consommation....</option>
+                                                                <option value="{{ $option->id }}">{{ $option->option_conso_titre }}</option>
+                                                        </select>
+                                                    @endif
+                                                @endforeach --}}
+                                                <div id="stateText" style="visibility: hidden">
+                                                    Numero Table <input type="text" class="form-control" id="STATE" name="numero"/>
+                                                </div>
+                                                <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
                                                     <button type="submit" class="btn btn-primary">
                                                         {{ __('Ajouter au panier') }}

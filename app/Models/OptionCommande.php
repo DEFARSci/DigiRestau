@@ -12,8 +12,7 @@ class OptionCommande extends Model
     use HasFactory;
 
     protected $fillable = [
-        'option_commande_nbre',
-        'option_commande_consommation',
+        'quantite',
         'option_commande_consommation_id',
         'option_commande_commande_id'
     ];

@@ -183,7 +183,7 @@
                                     <div class="form-group row justify-content-center">
                                         <div class="col-md-8">
                                             <label>Prix</label>
-                                            <input id="prix" type="text" class="form-control @error('prix') is-invalid @enderror" name="prix" placeholder="Prix">
+                                            <input id="prix" type="text" class="form-control @error('prix') is-invalid @enderror" name="prix" placeholder="Prix" required>
 
                                             @error('prix')
                                                 <span class="invalid-feedback" role="alert">

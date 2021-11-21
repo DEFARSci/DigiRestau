@@ -15,10 +15,11 @@ class CreateCommandesTable extends Migration
     {
         Schema::create('commandes', function (Blueprint $table) {
             $table->id();
-            $table->integer('quantite');
+            // $table->integer('quantite');
             $table->enum('statut', ['livre', 'annulle','encours'])->default('encours');
             $table->string('Type_livraison');
             $table->integer('numero_table')->nullable();
+            $table->integer('option')->nullable();
             $table->date('commande_added_dateTime');
             $table->date('commande_startcook_dateTime')->nullable();
             $table->date('commande_endcook_dateTime')->nullable();

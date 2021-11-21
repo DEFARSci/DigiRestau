@@ -51,3 +51,13 @@ $(document).ready(function(){
     });
     });
 
+    function showPlace(){
+        if ($('#AddrType').val() == 'sur_place') {
+        $('#stateText').css({'visibility':'visible'});
+        }else{
+            $('#stateText').css({'visibility':'hidden'});
+        }
+}
+
+
+

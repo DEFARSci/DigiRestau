@@ -15,7 +15,7 @@ class CreateOptionConsommationsTable extends Migration
     {
         Schema::create('option_consommations', function (Blueprint $table) {
             $table->id();
-            $table->float('option_conso_prix');
+            $table->integer('option_conso_prix');
             $table->string('option_conso_titre');
             $table->string('option_conso_description')->nullable();
             $table->timestamps();
