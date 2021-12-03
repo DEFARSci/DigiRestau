@@ -346,15 +346,11 @@ class RestaurantController extends Controller
             $commande->commande_user_id = Auth::user()->id;
             $commande->enseigne_id = $request->enseigne_id;
 
-            $commande->consommation_id = $request->consommation_id;
+            // $commande->consommation_id = $request->consommation_id;
 
             $commande->Type_livraison = $request->type;
             $commande->numero_table = $request->numero;
-            $commande->option = $request->option;
             $commande->commande_added_dateTime = now();
-            $commande->commande_startcook_dateTime = null;
-            $commande->commande_endcook_dateTime = null;
-            $commande->commande_done_dateTime = null;
 
             $consommations = [];
 
@@ -364,23 +360,15 @@ class RestaurantController extends Controller
                 $consommations['consommation_'. $i]['name'] = $conso->name;
                 $consommations['consommation_'. $i]['price'] = $conso->price;
                 $consommations['consommation_'. $i]['qty'] = $conso->qty;
-                $consommations['consommation_'. $i]['conso'] = $commande->consommation_id;
                 $i++;
             }
 
             $commande->carts = serialize($consommations);
             $commande->save();
-            OptionCommande::create([
-                'user_id' => $commande->commande_user_id,
-                'option_commande_commande_id' => $commande->id,
-                'option_commande_consommation_id' => $commande->consommation_id,
-                'quantite' => $request->quantite,
-            ]);
 
             Cart::destroy();
-
-
             return back()->with(session()->flash('alert-success', "Commande effectuée: Merci!!!"));
+
         }else{
             return back()->with(session()->flash('alert-danger', "Vous devez mettre a jour votre adresse et numero de telephone "));
 
@@ -404,29 +392,14 @@ class RestaurantController extends Controller
         $p= Consommation::find($request->consommation_id);
 
         $conso_prix = $request->input('option');
-        $conso_qte = $request->input('quantite');
         $type = $request->input('type');
         $numero = $request->input('numero');
         $enseigne = $request->input('enseigne_id');
-        Cart::add($p->id , $p->consommation_titre,$conso_qte,$conso_prix, ['type_livraison' => $type,'numero' => $numero,'enseigne_id' => $enseigne])
+
+        Cart::add($p->id , $p->consommation_titre,1,$conso_prix, ['type_livraison' => $type,'numero' => $numero,'enseigne_id' => $enseigne])
             ->associate('App\Models\Consommation');
-        //dd($cartItem);
+
         return back()->with(session()->flash('alert-success', "Commande Ajoutée"));
-
-        //dd($conso_id);
-        // $consommation = [];
-        // $consommation['id'] = $conso_id;
-        // $consommation['prix'] = $conso_prix;
-        // $consommation['qte'] = $conso_qte;
-
-        // $consommations = session()->get('conso');
-        // $consommations[$conso_id] = $consommation;
-        // session()->put('conso',$consommations);
-        // $request->session()->save();
-        // dd(session()->get('conso'));
-
-
-        //dd(session('conso'));
 
     }
 
@@ -437,25 +410,30 @@ class RestaurantController extends Controller
 
     public function updateQte(Request $request, $rowId)
     {
-        // $commandes = Cart::get($rowId);
-        // $qty = $commandes->qty +1;
-        // Cart::update($rowId,$qty);
+        $validator = Validator::make($request->all(), [
+            'qty' => 'required|numeric|between:1,10'
+        ]);
 
-        $data = $request->json()->all();
+        if($validator->fails())
+        {
+            session()->flash('alert-danger', 'La quantite du produit ne doit pas depasser 10.');
 
-        Cart::update($rowId, $data['qty']);
+            return response()->json(['danger' => "Quantite n'est pas mis a jour"]);
+        }
 
-        Session::flash('success', 'La quantite du produit est passee a '.$data['qty'].'.');
+        Cart::update($rowId, $request->qty);
+
+        session()->flash('alert-success', 'La quantite du produit est passee a '.$request->qty.'.');
+
         return response()->json(['success' => 'Quantite mis a jour']);
-
     }
 
     public function commandes()
     {
         $commandes = Commande::has('user')->get();
-        $commandes->transform(function($commande, $key){
+        $commandes->transform(function($commande, $key)
+        {
             $commande->carts = unserialize( $commande->carts );
-            //dd( $commande->carts );
             return $commande;
         });
         return view('restaurant.commandes.liste',compact('commandes'));

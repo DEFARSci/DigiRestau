@@ -40,46 +40,46 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                <form method="post" action="{{route('commander')}}" enctype="multipart/form-data">
-                                        @csrf
-                                            <div class="modal-body">
-                                                <h1>{{$con->consommation_titre}}</h1>
-                                                @if($con->consommation_image != null)
+                                    <div class="modal-body">
+                                        <h1>{{$con->consommation_titre}}</h1>
+                                        @if($con->consommation_image != null)
                                                     <img src="{{asset('storage'.'/'.$con->consommation_image)}}"  width="100">
-                                                @else
+                                        @else
                                                     <img src="{{asset('storage/conso.png')}}" alt="profile"  width="100">
-                                                @endif
-                                                <br/>
-                                                <h1>Prix: {{$con->getPrice()}}</h1>
-                                                <input id="conso" type="hidden" class="form-control" value="{{$con->id}}" name="consommation_id" autocomplete="consommation_id" autofocus>
-                                                <input id="enseigne" type="hidden" class="form-control" value="{{$con->user_id}}" name="enseigne_id" autocomplete="enseigne_id" autofocus>
-                                                <label>Quantite</label>
-                                                <input type="number" class="form-control" value="1" min="1" max="100" name="quantite" ><br/>
-                                                <select id="AddrType{{ $con->id  }}" onchange="showPlace({{ $con->id  }})" name="type" class="form-control">
-                                                    <option value="livraison">Livraison</option>
-                                                    <option value="sur_place">Sur place</option>
-                                                    <option value="a_emporter">a emporter</option>
-                                                    <option value="autre">autre</option>
-                                                </select><br/>
-                                                <div id="stateText{{ $con->id  }}" class="d-none">
-                                                    Numero Table <input type="text" class="form-control" id="STATE" name="numero"/>
-                                                </div>
-                                                    <label>Options</label>
-                                                        <select class="form-control" name="option" >
-                                                            <option value="{{ $con->consommation_prix }}">Simple</option>
-                                                            @foreach($con->optionsConso as $option)
-                                                                    <option value="{{ $option->option_conso_prix }}">{{$option->option_conso_titre}} || Prix: {{$option->getPriceConso()}}</option>
-                                                            @endforeach
-                                                        </select>
-
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                                                    <button type="submit" class="btn btn-primary ajouter-panier">
-                                                        {{ __('Ajouter au panier') }}
-                                                    </button>
-                                                </div>
+                                        @endif
+                                        <br/>
+                                        <h1>Prix: {{$con->getPrice()}}</h1>
+                                        <form method="post" action="{{route('commander')}}" enctype="multipart/form-data">
+                                            @csrf
+                                            <input id="conso" type="hidden" class="form-control" value="{{$con->id}}" name="consommation_id" autocomplete="consommation_id" autofocus>
+                                            <input id="enseigne" type="hidden" class="form-control" value="{{$con->user_id}}" name="enseigne_id" autocomplete="enseigne_id" autofocus>
+                                            <label>Quantite</label>
+                                            {{-- <input type="number" class="form-control" value="1" min="1" max="100" name="qty" ><br/> --}}
+                                            <select id="AddrType{{ $con->id  }}" onchange="showPlace({{ $con->id  }})" name="type" class="form-control">
+                                                <option value="livraison">Livraison</option>
+                                                <option value="sur_place">Sur place</option>
+                                                <option value="a_emporter">a emporter</option>
+                                                <option value="autre">autre</option>
+                                            </select><br/>
+                                            <div id="stateText{{ $con->id  }}" class="d-none">
+                                                Numero Table <input type="text" class="form-control" id="STATE" name="numero"/>
                                             </div>
-                                        </form>
+                                                <label>Options</label>
+                                            <select class="form-control" name="option" >
+                                                <option value="{{ $con->consommation_prix }}">Simple</option>
+                                                @foreach($con->optionsConso as $option)
+                                                    <option value="{{ $option->option_conso_prix }}">{{$option->option_conso_titre}} || Prix: {{$option->getPriceConso()}}</option>
+                                                @endforeach
+                                            </select>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                <button type="submit" class="btn btn-primary ajouter-panier">
+                                                    {{ __('Ajouter au panier') }}
+                                                </button>
+                                            </div>
+                                            </form>
+                                    </div>
                                 </div>
                             </div>
                             </div>

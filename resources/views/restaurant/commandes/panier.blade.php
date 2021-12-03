@@ -40,10 +40,10 @@
                                 <td>{{ $conso->name }}</td>
                                 <td>{{ $conso->price }}</td>
                                 <td>
-                                    {{-- <input type="number" class="form-control" value={{ $conso->id }} id="qte" max="100" min="1"> --}}
-                                    <select name="qty" id="qty{{ $conso->id }}" class="custom-select" data-id="{{ $conso->rowId }}" onchange="getQte({{ $conso->id }},{{ $conso->price }})">
-                                        @for($i = 1; $i <= 10; $i++)
-                                            <option value="{{ $i }}">{{ $i }}</option>
+                                    {{-- <input type="number" class="form-control" value="{{ $conso->qty }}" min="1" max="100" name="qty" ><br/> --}}
+                                    <select name="qty" id="qty" class="custom-select" data-id="{{ $conso->rowId }}">
+                                        @for ($i =1 ; $i <= 10 ; $i++)
+                                            <option value="{{ $i }}" {{ $i == $conso->qty ? 'selected' : ''}}>{{ $i }}</option>
                                         @endfor
                                     </select>
                                 </td>
@@ -70,14 +70,10 @@
         <div class="center">
             <form method="POST" action="{{ route('commander-final') }}">
                 @csrf
-
-                <input id="conso" type="hidden" class="form-control" value="{{$conso->id}}" name="consommation_id" autocomplete="consommation_id" autofocus>
-
                 <input id="enseigne" type="hidden" class="form-control" value="{{$conso->options->enseigne_id}}" name="enseigne_id" autocomplete="enseigne_id" autofocus>
                 <input id="type" type="hidden" class="form-control" value="{{$conso->options->type_livraison}}" name="type" autocomplete="type" autofocus>
                 <input id="numero" type="hidden" class="form-control" value="{{$conso->options->numero}}" name="numero" autocomplete="numero" autofocus>
-                <input id="option" type="hidden" class="form-control" value="{{$conso->price}}" name="option" autocomplete="option" autofocus>
-                <input id="qte{{ $conso->id }}" type="hidden" class="form-control" value="{{$conso->qty}}" name="quantite"  autocomplete="quantite" autofocus>
+
                 <button type="submit" class="btn btn-success">Finaliser votre commande</button>
 
             </form>
@@ -89,37 +85,53 @@
         </div>
     @endif
     <script>
+        (function(){
+           const selects =  document.querySelectorAll('#qty')
+           Array.from(selects).forEach((element) => {
+                element.addEventListener('change', function () {
+                    const rowId = element.getAttribute('data-id')
+                    axios.patch(`/panierQte/${rowId}`, {
+                        qty : this.value
+                    }).then(function (response) {
+                        console.log(response)
+                       location.reload()
+                    }).catch(function (error){
+                        console.log(error)
+                    })
+                })
+           })
+        })();
 
-        function getQte(id, price)
-        {
-            var selects =  document.querySelectorAll('#qty'+id)[0];
-            var value = selects.options[ selects.selectedIndex].value
+        // function getQte(id, price)
+        // {
+        //     var selects =  document.querySelectorAll('#qty'+id)[0];
+        //     var value = selects.options[ selects.selectedIndex].value
 
-           // var optionQte = document.getElementById('qteSelect'+id);
-            var subtotal = value * price;
-            document.getElementById("subtotal"+id).innerHTML = '<td id="subtotal'+id+'">'+subtotal+'</td>'
-
-
-           //var input = document.getElementById("qte"+id).value = '<input type="hidden" name="quantite" id="qte'+id+'">'
-            console.log(id)
-            getTotal();
-            console.log(document.getElementById("qte"+id))
-
-        }
-
-        function getTotal()
-        {
-            var sousTotal = document.querySelectorAll(".sousTotal");
-            var total = 0;
-            sousTotal.forEach(element => {
-                total += parseInt(element.innerText)
-            });
-
-            document.getElementById("total").innerHTML = '<h4 id="total">'+total+'</td>'
+        //    // var optionQte = document.getElementById('qteSelect'+id);
+        //     var subtotal = value * price;
+        //     document.getElementById("subtotal"+id).innerHTML = '<td id="subtotal'+id+'">'+subtotal+'</td>'
 
 
-            // console.log(sousTotal)
-            // console.log(total)
-        }
+        //    //var input = document.getElementById("qte"+id).value = '<input type="hidden" name="quantite" id="qte'+id+'">'
+        //     console.log(id)
+        //     getTotal();
+        //     console.log(document.getElementById("qte"+id))
+
+        // }
+
+        // function getTotal()
+        // {
+        //     var sousTotal = document.querySelectorAll(".sousTotal");
+        //     var total = 0;
+        //     sousTotal.forEach(element => {
+        //         total += parseInt(element.innerText)
+        //     });
+
+        //     document.getElementById("total").innerHTML = '<h4 id="total">'+total+'</td>'
+
+
+        //     // console.log(sousTotal)
+        //     // console.log(total)
+        // }
     </script>
 @endsection
