@@ -17,9 +17,6 @@ class Commande extends Model
         'Type_livraison',
         'numero_table',
         'commande_added_dateTime',
-        'commande_startcook_dateTime',
-        'commande_endcook_dateTime',
-        'commande_done_dateTime',
         'consommation_id',
         'enseigne_id',
         'commande_user_id'

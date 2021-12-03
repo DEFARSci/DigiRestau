@@ -15,18 +15,17 @@ class CreateOptionCommandesTable extends Migration
     {
         Schema::create('option_commandes', function (Blueprint $table) {
             $table->id();
-            $table->integer('quantite');
+            $table->integer('qty')->unsigned();
 
             $table->timestamps();
 
-            $table->unsignedBigInteger('option_commande_consommation_id');
-            $table->foreign('option_commande_consommation_id')->references('id')->on('consommations')->onDelete('cascade');
+            $table->unsignedBigInteger('commande_id')->nullable();
+            $table->foreign('commande_id')->references('id')->on('commandes')->onUpdate('cascade')->onDelete('set null');
 
-            $table->unsignedBigInteger('option_commande_commande_id');
-            $table->foreign('option_commande_commande_id')->references('id')->on('commandes')->onDelete('cascade');
+            $table->unsignedBigInteger('consommation_id')->nullable();
+            $table->foreign('consommation_id')->references('id')->on('consommations')->onUpdate('cascade')->onDelete('set null');
 
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
         });
     }
 

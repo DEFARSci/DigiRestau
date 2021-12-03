@@ -52,14 +52,4 @@ class Consommation extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-
-    public function commande()
-    {
-        return $this->hasMany(Commande::class);
-    }
-
-    public function optionCommande()
-    {
-        return $this->belongsTo(OptionCommande::class);
-    }
 }

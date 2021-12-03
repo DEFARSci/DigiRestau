@@ -15,7 +15,6 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <td>LOGO</td>
                                     <td>Date de la commande</td>
                                     <td>Type de livraison</td>
                                     <td>Numero Table</td>
@@ -27,13 +26,6 @@
                                 @foreach ($commandes as $commande )
                                    @if(Auth::user()->id === $commande->enseigne_id)
                                     <tr>
-                                        <td>
-                                            @if($commande->consommations->consommation_image != null)
-                                                <img src="{{asset('storage'.'/'.$commande->consommations->consommation_image)}}" height="70">
-                                             @else
-                                                <img src="{{asset('storage/conso.png')}}" alt="profile"  height="70">
-                                            @endif
-                                        </td>
                                         <td>{{ $commande->commande_added_dateTime}}</td>
                                         <td>{{ $commande->Type_livraison }}</td>
 

@@ -53,10 +53,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Commande::class);
     }
-    public function optionCommandes()
-    {
-        return $this->hasOne(OptionCommande::class);
-    }
 
     public function categoriesConso()
     {
