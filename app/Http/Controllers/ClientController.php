@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Mail\EMail;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Client;
+use App\Models\Commande;
+use App\Models\Consommation;
 use App\Models\Etablissement;
+use App\Models\OptionCommande;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
@@ -70,6 +73,19 @@ class ClientController extends Controller
         return view('client.listeEnseigne',compact('listeEnseignes'));
     }
 
+    //listes des commandes
+    public function listesCommandes()
+    {
+        $commandes = Commande::has('user')->get();
+        $commandes->transform(function($commande, $key){
+            $commande->carts = unserialize( $commande->carts );
+            //dd( $commande->carts );
+            return $commande;
+        });
+        $conso = Consommation::has('user')->get();
+        return view('client.listesCommandes',compact('commandes','conso'));
+    }
+
     public function searchEnseigneByClient()
     {
         $query = request()->get('rechercher');
@@ -81,21 +97,19 @@ class ClientController extends Controller
         }
     }
 
-    public function searchEnseigneByClientAdvanced()
+    public function searchEnseigneByClientAdvanced(Request $request)
     {
-        $q = request()->restaurant;
-        $query = request()->get('search');
-        if($q == 'restaurant')
+        $q = $request->input('search');
+        if($q)
         {
-            $listeEnseigne = User::where('name', 'LIKE',"%$query%")->get();
-            return response()->json($listeEnseigne);
+            $listeEnseignes = User::where('type', 'LIKE',"%$q%")->get();
+            if(request()->ajax()){
+                return response()->json($listeEnseignes);
+            }else{
+                return view('client.listeEnseigne',compact('listeEnseignes'));
+            }
+            return response()->json($listeEnseignes);
         }
-
-        // $query = request()->get('restau');
-        // $listeEnseigne = User::where('type', 'LIKE',"%$query%")->get();
-
-        // return response()->json($listeEnseigne);
-
     }
      // Fonction qui permet de valider le compte client par gmail
      public function verify($id, $verification)

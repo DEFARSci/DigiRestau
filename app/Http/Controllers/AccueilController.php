@@ -18,21 +18,23 @@ class AccueilController extends Controller
     public function show($user)
     {
         $conso = Consommation::where('user_id',$user)->get();
+        //session(['conso' => [] ]);
+        session('conso');
         $optionConso = OptionConsommation::has('user')->get();
         return view('menu.index', compact('conso','optionConso'));
     }
 
-    public function showMenu($menu)
-    {
-        if(request()->menu){
-            $conso = Consommation::where('consommation_categorie_id',request()->menu)->get();
+    // public function showMenu($menu)
+    // {
+    //     if(request()->menu){
+    //         $conso = Consommation::where('consommation_categorie_id',request()->menu)->get();
 
-        }else{
-            $conso = Consommation::where('user_id',$menu)->get();
-        }
+    //     }else{
+    //         $conso = Consommation::where('user_id',$menu)->get();
+    //     }
 
-        return view('menu.index', compact('conso'));
-    }
+    //     return view('menu.index', compact('conso'));
+    // }
 
 
 }

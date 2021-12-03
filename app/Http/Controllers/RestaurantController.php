@@ -11,14 +11,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Etablissement;
+use App\Models\Notifications;
 use App\Models\OptionCommande;
 use App\Models\OptionConsommation;
-use App\Models\Type;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Validator;
+use Gloudemans\Shoppingcart\Facades\Cart;
+use Illuminate\Support\Facades\Session;
 use PDF;
 
 class RestaurantController extends Controller
@@ -336,15 +338,16 @@ class RestaurantController extends Controller
     // commande fait par le client
     public function commandeByClient(Request $request)
     {
-
         $telephone = Auth::user()->client->client_adresse;
         $adresse = Auth::user()->client->client_adresse;
         if($telephone != null && $adresse != null)
         {
             $commande = new Commande();
             $commande->commande_user_id = Auth::user()->id;
-            $commande->consommation_id = $request->consommation_id;
             $commande->enseigne_id = $request->enseigne_id;
+
+            $commande->consommation_id = $request->consommation_id;
+
             $commande->Type_livraison = $request->type;
             $commande->numero_table = $request->numero;
             $commande->option = $request->option;
@@ -353,14 +356,28 @@ class RestaurantController extends Controller
             $commande->commande_endcook_dateTime = null;
             $commande->commande_done_dateTime = null;
 
-            $commande->save();
+            $consommations = [];
 
+            $i = 0;
+
+            foreach(Cart::content() as $conso){
+                $consommations['consommation_'. $i]['name'] = $conso->name;
+                $consommations['consommation_'. $i]['price'] = $conso->price;
+                $consommations['consommation_'. $i]['qty'] = $conso->qty;
+                $consommations['consommation_'. $i]['conso'] = $commande->consommation_id;
+                $i++;
+            }
+
+            $commande->carts = serialize($consommations);
+            $commande->save();
             OptionCommande::create([
+                'user_id' => $commande->commande_user_id,
                 'option_commande_commande_id' => $commande->id,
                 'option_commande_consommation_id' => $commande->consommation_id,
                 'quantite' => $request->quantite,
             ]);
 
+            Cart::destroy();
 
 
             return back()->with(session()->flash('alert-success', "Commande effectuée: Merci!!!"));
@@ -369,12 +386,84 @@ class RestaurantController extends Controller
 
         }
 
+
+    }
+
+    public function addPanier(Request $request)
+    {
+
+        $dipli = Cart::search(function ($cartItem, $rowId) use ($request) {
+            return $cartItem->id === $request->consommation_id;
+        });
+
+        if($dipli->isNotEmpty()){
+            return back()->with(session()->flash('alert-success', "Commande deja ajoutée"));
+
+        }
+
+        $p= Consommation::find($request->consommation_id);
+
+        $conso_prix = $request->input('option');
+        $conso_qte = $request->input('quantite');
+        $type = $request->input('type');
+        $numero = $request->input('numero');
+        $enseigne = $request->input('enseigne_id');
+        Cart::add($p->id , $p->consommation_titre,$conso_qte,$conso_prix, ['type_livraison' => $type,'numero' => $numero,'enseigne_id' => $enseigne])
+            ->associate('App\Models\Consommation');
+        //dd($cartItem);
+        return back()->with(session()->flash('alert-success', "Commande Ajoutée"));
+
+        //dd($conso_id);
+        // $consommation = [];
+        // $consommation['id'] = $conso_id;
+        // $consommation['prix'] = $conso_prix;
+        // $consommation['qte'] = $conso_qte;
+
+        // $consommations = session()->get('conso');
+        // $consommations[$conso_id] = $consommation;
+        // session()->put('conso',$consommations);
+        // $request->session()->save();
+        // dd(session()->get('conso'));
+
+
+        //dd(session('conso'));
+
+    }
+
+    public function PanierDelete($rowId){
+        Cart::remove($rowId);
+        return back()->with(session()->flash('alert-danger', "Commande Supprimée"));
+    }
+
+    public function updateQte(Request $request, $rowId)
+    {
+        // $commandes = Cart::get($rowId);
+        // $qty = $commandes->qty +1;
+        // Cart::update($rowId,$qty);
+
+        $data = $request->json()->all();
+
+        Cart::update($rowId, $data['qty']);
+
+        Session::flash('success', 'La quantite du produit est passee a '.$data['qty'].'.');
+        return response()->json(['success' => 'Quantite mis a jour']);
+
     }
 
     public function commandes()
     {
         $commandes = Commande::has('user')->get();
+        $commandes->transform(function($commande, $key){
+            $commande->carts = unserialize( $commande->carts );
+            //dd( $commande->carts );
+            return $commande;
+        });
         return view('restaurant.commandes.liste',compact('commandes'));
+    }
+
+    public function panier()
+    {
+        return view('restaurant.commandes.panier');
     }
 
     // Etat de la commande livre, annule, encours
@@ -383,6 +472,13 @@ class RestaurantController extends Controller
         $commande->statut = ['livre' =>'livre'];
         $commande->statut = 'livre';
         $commande->update();
+
+        $notification = new Notifications();
+        $notification->type = 'livree';
+        $notification->sender = $commande->enseigne_id;
+        $notification->recipient = $commande->commande_user_id;
+        $notification->sending_date = date('Y-m-d');
+        $notification->save();
 
         return back()->with(session()->flash('alert-success', "Commande livrée"));
 
@@ -394,6 +490,13 @@ class RestaurantController extends Controller
         $commande->statut = 'encours';
         $commande->update();
 
+        $notification = new Notifications();
+        $notification->type = 'commande_encours';
+        $notification->sender = $commande->enseigne_id;
+        $notification->recipient = $commande->commande_user_id;
+        $notification->sending_date = date('Y-m-d');
+        $notification->save();
+
         return back()->with(session()->flash('alert-success', "Commande encours"));
     }
 
@@ -403,6 +506,13 @@ class RestaurantController extends Controller
         $commande->statut = ['annulle' =>'annulle'];
         $commande->statut = 'annulle';
         $commande->update();
+
+        $notification = new Notifications();
+        $notification->type = 'commande_annullee';
+        $notification->sender = $commande->enseigne_id;
+        $notification->recipient = $commande->commande_user_id;
+        $notification->sending_date = date('Y-m-d');
+        $notification->save();
 
         return back()->with(session()->flash('alert-success', "Commande annulée"));
     }

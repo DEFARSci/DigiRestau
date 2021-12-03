@@ -11,20 +11,21 @@
                     <input type="text" id="rechercher" name="rechercher" value="{{ request()->rechercher ?? '' }}" placeholder="Rechercher une enseigne" class="form-control" />
                 </form>
                 <form action="{{ route('searchEnseigneAdvanced') }}" method="GET">
+
                     <div class="form-check form-check-inline py-4">
                         <input class="form-check-input" type="checkbox" name="search" id="inlineCheckbox1" value="restaurant">
                         <label class="form-check-label" for="inlineCheckbox1">Restaurant</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" name="" id="inlineCheckbox2" value="{{ request()->search}}">
+                        <input class="form-check-input" type="checkbox" name="search" id="inlineCheckbox2" value="bar">
                         <label class="form-check-label" for="inlineCheckbox2">Bar</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" name="" id="inlineCheckbox2" value="{{ request()->search}}">
+                        <input class="form-check-input" type="checkbox" name="search" id="inlineCheckbox2" value="cafe">
                         <label class="form-check-label" for="inlineCheckbox2">Café</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" name="terasse" id="inlineCheckbox2" value="option2">
+                        <input class="form-check-input" type="checkbox" name="search" id="inlineCheckbox2" value="terasse">
                         <label class="form-check-label" for="inlineCheckbox2">Terasse</label>
                     </div>
                     <button  type="submit" class="btn btn-secondary form-inline">Trier</button>

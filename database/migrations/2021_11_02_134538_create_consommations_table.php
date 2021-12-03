@@ -18,7 +18,7 @@ class CreateConsommationsTable extends Migration
             $table->string('consommation_titre');
             $table->string('consommation_description')->nullable();
             $table->string('consommation_image')->nullable();
-            $table->double('consommation_prix')->nullable();
+            $table->integer('consommation_prix');
             $table->boolean('statut')->default(0);
 
             $table->timestamps();

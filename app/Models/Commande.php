@@ -12,6 +12,7 @@ class Commande extends Model
     use HasFactory;
 
     protected $fillable = [
+
         'statut',
         'Type_livraison',
         'numero_table',
@@ -24,12 +25,10 @@ class Commande extends Model
         'commande_user_id'
     ];
 
-
-    public function optionsCommandes()
+    public function OptionCommandes()
     {
         return $this->hasMany(OptionCommande::class);
     }
-
     public function consommations()
     {
         return $this->belongsTo(Consommation::class,'consommation_id');
@@ -38,5 +37,10 @@ class Commande extends Model
     public function user()
     {
         return $this->belongsTo(User::class,'commande_user_id');
+    }
+
+    public function enseigne()
+    {
+        return $this->belongsTo(User::class,'enseigne_id');
     }
 }

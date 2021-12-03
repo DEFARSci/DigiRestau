@@ -18,8 +18,9 @@ class CreateCommandesTable extends Migration
             // $table->integer('quantite');
             $table->enum('statut', ['livre', 'annulle','encours'])->default('encours');
             $table->string('Type_livraison');
-            $table->integer('numero_table')->nullable();
+            $table->string('numero_table')->nullable();
             $table->integer('option')->nullable();
+            $table->text('carts');
             $table->date('commande_added_dateTime');
             $table->date('commande_startcook_dateTime')->nullable();
             $table->date('commande_endcook_dateTime')->nullable();

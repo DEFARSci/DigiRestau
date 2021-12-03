@@ -15,15 +15,18 @@ class CreateTokenOrdersTable extends Migration
     {
         Schema::create('token_orders', function (Blueprint $table) {
             $table->id();
-            $table->string('token_order_token');
+            $table->string('token_order_token')->nullable();
             $table->string('token_order_table');
-            $table->integer('token_order_duration');
-            $table->date('token_order_added_dateTime');
+            $table->dateTime('token_order_duration');
+            // $table->dateTime('token_order_added_dateTime');
 
             $table->timestamps();
 
+            // $table->unsignedBigInteger('token_consommation_id');
+            // $table->foreign('token_consommation_id')->references('id')->on('consommations')->onDelete('cascade');
+
             $table->unsignedBigInteger('token_order_etablissement_id');
-            $table->foreign('token_order_etablissement_id')->references('id')->on('etablissements')->onDelete('cascade');
+            $table->foreign('token_order_etablissement_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

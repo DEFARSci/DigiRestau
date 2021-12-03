@@ -2,7 +2,7 @@
 @section('content')
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <div class="flash-message">
                     @foreach (['danger', 'warning', 'success', 'info'] as $msg)
                         @if(Session::has('alert-' . $msg))
@@ -16,13 +16,11 @@
                             <thead>
                                 <tr>
                                     <td>LOGO</td>
-                                    <td>Date</td>
-                                    <td>Nom</td>
-                                    <td>Prix</td>
+                                    <td>Date de la commande</td>
                                     <td>Type de livraison</td>
-                                    <td>Client</td>
+                                    <td>Numero Table</td>
                                     <td align="center">Statut</td>
-                                    <td>Action</td>
+                                    <td>Details</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -37,47 +35,15 @@
                                             @endif
                                         </td>
                                         <td>{{ $commande->commande_added_dateTime}}</td>
-                                        <td>{{ $commande->consommations->consommation_titre }}</td>
-                                        <td>{{ $commande->consommations->consommation_prix }}</td>
                                         <td>{{ $commande->Type_livraison }}</td>
-                                        <td>
-                                            <!-- Button trigger modal -->
-                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal-{{ $commande->id }}">
-                                                <i class="fa fa-question-circle" aria-hidden="true"></i>
-                                            </button>
-                                                <!-- Modal -->
-                                                <div class="modal fade" id="exampleModal-{{ $commande->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">Informations Client</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div class="card" style="border:none">
-                                                                <div class="card-body col-md-8">
-                                                                        <table style="background-color: none;">
-                                                                            <tr>
-                                                                                <td class="col-md-2">Nom</td>
-                                                                                <td class="col-md-2">Adresse</td>
-                                                                                <td class="col-md-2">Telephone</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td class="col-md-2">{{$commande->user->nameE}}</td>
-                                                                                <td class="col-md-2">{{$commande->user->client->client_adresse}}</td>
-                                                                                <td class="col-md-2">{{$commande->user->client->client_numero}}</td>
-                                                                            </tr>
-                                                                        </table>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                                                        </div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </td>
+
+                                        @if($commande->Type_livraison =="sur_place")
+                                            @if($commande->numero_table!=null)
+                                                <td>{{ $commande->numero_table }}</td>
+                                            @endif
+                                        @else
+                                            <td>NA</td>
+                                        @endif
                                         <td>
                                             <div class="wrapper">
                                                 <div class="select_wrap">
@@ -186,7 +152,71 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td>Action</td>
+                                        <td>
+                                            <!-- Details commandes -->
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#details-{{ $commande->id }}">
+                                                Details
+                                            </button>
+
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="details-{{ $commande->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Detail de la commande</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row justify-content-center">
+                                                            <div class="card" style="border:none">
+                                                                    {{-- Details PRODDUIT --}}
+                                                                    <div class="card-title text-center">Information de la commande</div>
+                                                                    <div class="card-body">
+                                                                            <table class="table" style="background-color: none;">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <td class="col-md-2">Nom</td>
+                                                                                        <td class="col-md-2">Prix</td>
+                                                                                        <td class="col-md-2">Quantite</td>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @foreach ($commande->carts as $cart )
+                                                                                        <tr>
+                                                                                            <td class="col-md-2">{{$cart['name']}}</td>
+                                                                                            <td class="col-md-2">{{$cart['price']}}</td>
+
+                                                                                            <td class="col-md-2">{{$cart['qty']}}</td>
+                                                                                        </tr>
+                                                                                    @endforeach
+                                                                                </tbody>
+                                                                            </table>
+                                                                    </div>
+                                                                <div class="card-title text-center">Information du Client</div>
+                                                                <div class="card-body">
+                                                                        <table class="table" style="background-color: none;">
+                                                                            <tr>
+                                                                                <td class="col-md-2">Nom</td>
+                                                                                <td class="col-md-2">Adresse</td>
+                                                                                <td class="col-md-2">Telephone</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td class="col-md-2">{{$commande->user->nameE}}</td>
+                                                                                <td class="col-md-2">{{$commande->user->client->client_adresse}}</td>
+                                                                                <td class="col-md-2">{{$commande->user->client->client_numero}}</td>
+                                                                            </tr>
+                                                                        </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </td>
                                     </tr>
                                    @endif
                                 @endforeach

@@ -53,6 +53,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Commande::class);
     }
+    public function optionCommandes()
+    {
+        return $this->hasOne(OptionCommande::class);
+    }
 
     public function categoriesConso()
     {
@@ -83,8 +87,7 @@ class User extends Authenticatable
         return $this->hasOne(Etablissement::class);
     }
 
-    public function type()
-    {
-        return $this->hasOne(Type::class);
-    }
+   public function tokens(){
+       return $this->hasMany(Token_order::class);
+   }
 }

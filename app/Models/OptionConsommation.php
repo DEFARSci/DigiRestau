@@ -15,7 +15,8 @@ class OptionConsommation extends Model
         'option_conso_prix',
         'option_conso_titre',
         'consommation_id',
-        'option_conso_description'
+        'option_conso_description',
+        'user_id'
     ];
 
     public function consomation()
@@ -23,14 +24,27 @@ class OptionConsommation extends Model
         return $this->belongsTo(Consommation::class,'consommation_id');
     }
 
-    public function optionsCommandes()
-    {
-        return $this->hasMany(OptionCommande::class);
-    }
-
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function getPriceConso(){
+        $prix = $this->option_conso_prix/1000;
+        return number_format($prix,3,'.',' ') . ' CFA';
+    }
+
+    public function getBuyableIdentifier(){
+        return $this->id;
+    }
+
+    public function getBuyableDescription(){
+        return $this->option_conso_titre;
+    }
+
+    public function getBuyablePrice(){
+        return $this->option_conso_prix;
+    }
+
 
 }

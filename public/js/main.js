@@ -51,13 +51,20 @@ $(document).ready(function(){
     });
     });
 
-    function showPlace(){
-        if ($('#AddrType').val() == 'sur_place') {
-        $('#stateText').css({'visibility':'visible'});
+    function showPlace(id)
+    {
+        if ($('#AddrType'+id).val() == 'sur_place') {
+            document.getElementById('stateText'+id).className = "block";
         }else{
-            $('#stateText').css({'visibility':'hidden'});
+            document.getElementById('stateText'+id).className = "d-none";
         }
 }
+
+ const consommations = Array.from(document.querySelectorAll('.ajouter-panier'));
+
+//  consommations.forEach(() =>)
+
+
 
 
 

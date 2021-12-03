@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTypeRestaurantsTable extends Migration
+class CreateNotificationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,13 @@ class CreateTypeRestaurantsTable extends Migration
      */
     public function up()
     {
-        Schema::create('type_restaurants', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->string('type');
+            $table->unsignedInteger('sender');
+            $table->unsignedInteger('recipient');
+            $table->date('sending_date')->nullable();
             $table->timestamps();
-
         });
     }
 
@@ -28,6 +30,6 @@ class CreateTypeRestaurantsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('type_restaurants');
+        Schema::dropIfExists('notifications');
     }
 }

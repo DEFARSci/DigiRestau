@@ -7,6 +7,9 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DataController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\QrCodeController;
+use App\Http\Controllers\StaticController;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -66,6 +69,7 @@ Route::patch('/mon-compte/{user}/update',[RestaurantController::class, 'update']
 Route::get('/mon-compte-client/{user}/edit',[ClientController::class,'edit'])->name('moncompteClient');
 Route::patch('/mon-compte-client/{user}/update',[ClientController::class, 'update'])->name('client.updateCompte');
 Route::get('/listesEnseignes',[ClientController::class,'listes'])->name('listesEnseignes');
+Route::get('listes-commandesByClient',[ClientController::class,'listesCommandes']);
 
 //Auth
 Route::post('/add-client',[ClientController::class,'store'])->name('client.store');
@@ -100,11 +104,32 @@ Route::get('qrcode', [RestaurantController::class, 'homeRestaurant'])->name('gen
 Route::get('pdf', [RestaurantController::class, 'pdf'])->name('pdf');
 
 //commande
-Route::post('commander', [RestaurantController::class, 'commandeByClient'])->name('commander')->middleware('auth');
+Route::post('commander/merci', [RestaurantController::class, 'commandeByClient'])->name('commander-final')->middleware('auth');
+
+//Panier
+Route::post('mon-panier', [RestaurantController::class, 'addPanier'])->name('commander')->middleware('auth');
 Route::get('listes-commandes', [RestaurantController::class, 'commandes'])->name('mes-commandes')->middleware('auth');
+Route::get('panier', [RestaurantController::class, 'panier'])->name('mon-panier')->middleware('auth');
+Route::delete('panier-delete/{id}',[RestaurantController::class,'PanierDelete'])->name('panier-delte');
+Route::patch('/panierQte/{rowId}',[RestaurantController::class,'updateQte'])->name('update-qte');
+
+// Etat de la commande modifie par le restaurant
 Route::get('commande-statutEncours/{commande}',[RestaurantController::class,'makeStatutEncours'])->name('makeStatutEncours.commande');
 Route::get('commande-statutLivre/{commande}',[RestaurantController::class,'makeStatutLivre'])->name('makeStatutLivre.commande');
 Route::get('commande-statutNonLivre/{commande}',[RestaurantController::class,'makeStatutNonlivre'])->name('makeStatutNonlivre.commande');
+
+//Voir l'etat de sa commande
+Route::get('/notification',[NotificationController::class,'show'])->name('notification');
+Route::get('/notification/delete/{id}',[NotificationController::class,'destroy'])->name('notification.delete');
+
+//Static nbre de commandes effectuees
+Route::get('statistic/{year}',[StaticController::class,'static'])->name('commande-static')->middleware('auth');
+Route::get('statistic-Day', [StaticController :: class , 'index'])->name('commande-static-day')->middleware('auth');
+
+//qrcode prive
+Route::get('qrcode-index',[QrCodeController::class,'index']);
+Route::post('qrcode-add',[QrCodeController::class,'qrcodeAdd'])->name('add');
+Route::get('qrcode-show/{qrcode}',[QrCodeController::class,'show'])->name('showQrCode');
 
 Auth::routes();
 

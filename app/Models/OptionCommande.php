@@ -14,17 +14,23 @@ class OptionCommande extends Model
     protected $fillable = [
         'quantite',
         'option_commande_consommation_id',
-        'option_commande_commande_id'
+        'option_commande_commande_id',
+        'user_id',
     ];
 
 
-    public function optionConso()
+    public function consommations()
     {
-        return $this->belongsTo(OptionConsommation::class);
+        return $this->hasMany(Consommation::class,'option_commande_consommation_id');
     }
 
-    public function commande()
+    public function Commande()
     {
-        return $this->belongsTo(Commande::class);
+        return $this->belongsTo(Commande::class,'option_commande_commande_id','quantite');
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class,'user_id','quantite');
     }
 }
